@@ -1,0 +1,38 @@
+.main-container{
+  background-color: #84DAC1;
+  height: auto !important;
+  min-height: 100%;
+  min-width: 100%;
+}
+
+.register-login-container{
+  margin-top: 110px;
+}
+
+.register-login-container__information{
+  margin-bottom: 30px;
+  text-align: center;
+  color: white;
+}
+
+.register-login-container__button{
+  background-color: #61A18F;
+  margin-left: auto;
+  margin-right: auto;
+  width: 60px;
+  height: 60px;
+  border-radius: 100%;
+
+  img{
+    height: 35px;
+    margin-left: 12px;
+    margin-top: 12px;
+  }
+
+  p{
+    font-size: 100px;
+    color: #A8F8E1;
+    margin-top: -85px;
+    margin-left: -10px;
+  }
+}

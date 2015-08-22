@@ -85,6 +85,7 @@ gulp.task('fonts', () => {
 
 gulp.task('compile-coffee', function () {
     gulp.src('./app/scripts/coffeescript/*.coffee')
+    .pipe($.plumber())
     .pipe(coffee())
     .pipe(gulp.dest('./app/scripts/'));
 });

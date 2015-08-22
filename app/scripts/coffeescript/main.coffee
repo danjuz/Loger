@@ -6,8 +6,8 @@ dateOfToday = ->
   month = today.getMonth()
 
   dateLocation = document.querySelector('.header__date-area')
-  
-  #dateLocation.innerHTML = "<div class='date-area__date'>" + date + "</div><br/><div class='date-area__month'>" + dateNames[month] + "</div>"
-  dateLocation.innerHTML = date + '<br>' + dateNames[month]
+
+  dateLocation.innerHTML = "<div class='date-area__date'>" + date + "</div><br/><div class='date-area__month'>" + dateNames[month] + "</div>"
+  #dateLocation.innerHTML = date + '<br>' + dateNames[month]
 
 dateOfToday()

@@ -8,8 +8,20 @@ body {
 
 }
 
-.header__main-container-date{
-font-size: 1.8em;
+.header__date-area{
+  margin: 20px;
+  color: #B9E5DF;
+}
+
+.date-area__date{
+  font-size: 1.8em;
+  margin-left: 13px;
+}
+
+.date-area__month{
+  margin: -20px 0 0 0;
+  font-size: 2em;
+
 }
 
 .footer-area__img{

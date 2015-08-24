@@ -3,15 +3,24 @@ dateNames = ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt
 logerApp = {
 
   loginButton: document.querySelector('.register-login-container__button')
+  addButton: document.querySelector('.add-container__button')
+  workOutContainer: document.querySelector('.work-out-conatiner')
 
   init: ->
     this.bindEvents()
 
   bindevents: ->
     self = this
-    this.loginButton.addEventListener 'click', ->
-      self.redirect()
     this.dateOfToday()
+
+    if (window.location.href == 'http://localhost:9000/')
+      this.loginButton.addEventListener 'click', ->
+        self.redirect()
+
+    if (window.location.href == 'http://www.localhost:9000/logg-results.html')
+      this.addButton.addEventListener 'click', ->
+        self.addWorkOut()
+
 
   dateOfToday: ->
     today = new Date()
@@ -31,6 +40,10 @@ logerApp = {
         window.location.href = 'http://www.localhost:9000/logg-results.html';
 
     return
+
+  addWorkOut: ->
+
+
 
 
   }

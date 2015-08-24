@@ -5,16 +5,25 @@
 
   logerApp = {
     loginButton: document.querySelector('.register-login-container__button'),
+    addButton: document.querySelector('.add-container__button'),
+    workOutContainer: document.querySelector('.work-out-conatiner'),
     init: function() {
       return this.bindEvents();
     },
     bindevents: function() {
       var self;
       self = this;
-      this.loginButton.addEventListener('click', function() {
-        return self.redirect();
-      });
-      return this.dateOfToday();
+      this.dateOfToday();
+      if (window.location.href === 'http://localhost:9000/') {
+        this.loginButton.addEventListener('click', function() {
+          return self.redirect();
+        });
+      }
+      if (window.location.href === 'http://www.localhost:9000/logg-results.html') {
+        return this.addButton.addEventListener('click', function() {
+          return self.addWorkOut();
+        });
+      }
     },
     dateOfToday: function() {
       var date, dateLocation, month, today;
@@ -35,7 +44,8 @@
           return window.location.href = 'http://www.localhost:9000/logg-results.html';
         }
       });
-    }
+    },
+    addWorkOut: function() {}
   };
 
   logerApp.bindevents();

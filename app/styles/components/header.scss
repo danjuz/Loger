@@ -1,19 +1,30 @@
 .header{
+  display: table;
+  width: 100%;
   position: relative;
+
+  li{
+    display: table-cell;
+    padding: 3px 0;
+  }
+}
+
+%position{
+  position: absolute;
+    top: 0;
 }
 
 .header__main-container-logo{
-  width: 50px;
-  height: 50px;
+  @extend %position;
   font-size: 3.5em;
-  margin-left: auto;
-  margin-right: auto;
+  left:50%;
+  margin-left:-40px;
 }
 
 .header__date-area{
-  margin: 20px;
+  @extend %position;
   color: #B9E5DF;
-
+  left: 40px;
 }
 
 .date-area__date{
@@ -27,13 +38,10 @@
 }
 
 .header__main-container-statistic{
-  display: inline-block;
-  position: absolute;
-  right: 20px;
-  top: 5px;
-
+  @extend %position;
+  margin-right: 3em;
+  right: 30px;
   img {
-    height: 50px;
     width: 50px;
   }
 }

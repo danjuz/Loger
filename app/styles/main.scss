@@ -2,5 +2,9 @@
 // endbower
 
 @import 'base/normalize';
-@import 'pages/index';
 @import 'layout/general';
+@import 'pages/index';
+@import 'pages/logg-results';
+
+@import 'components/header';
+@import 'components/footer';

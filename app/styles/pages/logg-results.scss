@@ -1,0 +1,24 @@
+.add-container{
+  margin-top: 110px;
+}
+
+.add-container__information{
+  margin-bottom: 30px;
+  text-align: center;
+  color: white;
+}
+
+.add-container__button{
+  background-color: #61A18F;
+  margin-left: auto;
+  margin-right: auto;
+  width: 60px;
+  height: 60px;
+  border-radius: 100%;
+
+  img{
+    height: 35px;
+    margin-left: 12px;
+    margin-top: 12px;
+  }
+}

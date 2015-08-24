@@ -4,7 +4,7 @@
   dateNames = ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec'];
 
   logerApp = {
-    loginButton: document.querySelector('.register-login-container__button'),
+    loginButton: document.querySelector('.register-login-container'),
     addButton: document.querySelector('.add-container__button'),
     workOutContainer: document.querySelector('.work-out-conatiner'),
     init: function() {
@@ -16,7 +16,8 @@
       this.dateOfToday();
       if (window.location.href === 'http://localhost:9000/') {
         this.loginButton.addEventListener('click', function() {
-          return self.redirect();
+          self.redirect();
+          return console.log('HEJHEJHJE');
         });
       }
       if (window.location.href === 'http://www.localhost:9000/logg-results.html') {

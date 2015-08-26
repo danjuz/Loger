@@ -16,7 +16,7 @@
       this.dateOfToday();
       if (window.location.href === 'http://localhost:9000/') {
         this.loginButton.addEventListener('click', function() {
-          return self.redirect();
+          return self.redirectWithFacebookAndFirebaseLogin();
         });
       }
       if (window.location.href === 'http://www.localhost:9000/logg-results.html') {
@@ -33,7 +33,7 @@
       dateLocation = document.querySelector('.header__date-area');
       return dateLocation.innerHTML = "<div class='date-area__date'>" + date + "</div><br/><div class='date-area__month'>" + dateNames[month] + "</div>";
     },
-    redirect: function() {
+    redirectWithFacebookAndFirebaseLogin: function() {
       var ref;
       ref = new Firebase('https://loger.firebaseio.com');
       ref.authWithOAuthPopup('facebook', function(error, authData) {

@@ -15,7 +15,7 @@ logerApp = {
 
     if (window.location.href == 'http://localhost:9000/')
       this.loginButton.addEventListener 'click', ->
-        self.redirect()
+        self.redirectWithFacebookAndFirebaseLogin()
 
     if (window.location.href == 'http://www.localhost:9000/logg-results.html')
       this.addButton.addEventListener 'click', ->
@@ -29,7 +29,7 @@ logerApp = {
     dateLocation = document.querySelector('.header__date-area')
     dateLocation.innerHTML = "<div class='date-area__date'>" + date + "</div><br/><div class='date-area__month'>" + dateNames[month] + "</div>"
 
-  redirect: ->
+  redirectWithFacebookAndFirebaseLogin: ->
     ref = new Firebase('https://loger.firebaseio.com')
     ref.authWithOAuthPopup 'facebook', (error, authData) ->
       if error
@@ -64,7 +64,7 @@ logerApp = {
     deleteButton = document.createElement('button')
     okButton = document.createElement('button')
 
-    # Create text to buttons and append them to right button
+    # Create text to buttons/elements and append them to right element
 
     deleteButtonText = document.createTextNode('Delete')
     okButtonText = document.createTextNode('Ok')
@@ -73,7 +73,7 @@ logerApp = {
     okButton.appendChild(okButtonText)
     tdMultiSymbol.appendChild(multiSymbol)
 
-    # Add classname to elements
+    # Add classname to elements alá BEM-syntax
 
     table.className = 'work-out-conatiner__table-add'
     deleteButton.className = 'work-out-conatiner__table-add__delete-Button'

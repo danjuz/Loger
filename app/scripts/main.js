@@ -16,7 +16,7 @@
       this.dateOfToday();
       if (window.location.href === 'http://localhost:9000/') {
         this.loginButton.addEventListener('click', function() {
-          return self.redirectWithFacebookAndFirebaseLogin();
+          return self.redirectWithFBAndFB();
         });
       }
       if (window.location.href === 'http://www.localhost:9000/logg-results.html') {
@@ -33,7 +33,7 @@
       dateLocation = document.querySelector('.header__date-area');
       return dateLocation.innerHTML = "<div class='date-area__date'>" + date + "</div><br/><div class='date-area__month'>" + dateNames[month] + "</div>";
     },
-    redirectWithFacebookAndFirebaseLogin: function() {
+    redirectWithFBAndFB: function() {
       var ref;
       ref = new Firebase('https://loger.firebaseio.com');
       ref.authWithOAuthPopup('facebook', function(error, authData) {
@@ -60,8 +60,8 @@
       nameInput = document.createElement('input');
       quantityInput = document.createElement('input');
       workOutMultiplicationInput = document.createElement('input');
-      deleteButton = document.createElement('button');
-      okButton = document.createElement('button');
+      deleteButton = document.createElement('div');
+      okButton = document.createElement('div');
       deleteButtonText = document.createTextNode('Delete');
       okButtonText = document.createTextNode('Ok');
       multiSymbol = document.createTextNode('X');
@@ -69,8 +69,18 @@
       okButton.appendChild(okButtonText);
       tdMultiSymbol.appendChild(multiSymbol);
       table.className = 'work-out-conatiner__table-add';
-      deleteButton.className = 'work-out-conatiner__table-add__delete-Button';
-      okButton.className = 'work-out-conatiner__table-add__ok-button';
+      tdDeleteButton.className = 'work-out-conatiner__table-add__delete-button';
+      tdOkButton.className = 'work-out-conatiner__table-add__ok-button';
+      tdName.className = 'work-out-conatiner__table-add__name-input';
+      tdQuantity.className = 'work-out-conatiner__table-add__quanity-input';
+      tdworkOutMultiplication.className = 'work-out-conatiner__table-add__workout-multiplication-input';
+      tdMultiSymbol.className = 'work-out-conatiner__table-add__td-muliply-symbol';
+      tdName.colSpan = 20;
+      tdQuantity.colSpan = 8;
+      tdMultiSymbol.colSpan = 4;
+      tdworkOutMultiplication.colSpan = 4;
+      tdDeleteButton.colSpan = 10;
+      tdOkButton.colSpan = 10;
       tdName.appendChild(nameInput);
       tdQuantity.appendChild(quantityInput);
       tdworkOutMultiplication.appendChild(workOutMultiplicationInput);

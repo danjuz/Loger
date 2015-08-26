@@ -15,7 +15,7 @@ logerApp = {
 
     if (window.location.href == 'http://localhost:9000/')
       this.loginButton.addEventListener 'click', ->
-        self.redirectWithFacebookAndFirebaseLogin()
+        self.redirectWithFBAndFB()
 
     if (window.location.href == 'http://www.localhost:9000/logg-results.html')
       this.addButton.addEventListener 'click', ->
@@ -29,7 +29,7 @@ logerApp = {
     dateLocation = document.querySelector('.header__date-area')
     dateLocation.innerHTML = "<div class='date-area__date'>" + date + "</div><br/><div class='date-area__month'>" + dateNames[month] + "</div>"
 
-  redirectWithFacebookAndFirebaseLogin: ->
+  redirectWithFBAndFB: ->
     ref = new Firebase('https://loger.firebaseio.com')
     ref.authWithOAuthPopup 'facebook', (error, authData) ->
       if error
@@ -61,8 +61,8 @@ logerApp = {
     quantityInput = document.createElement('input')
     workOutMultiplicationInput = document.createElement('input')
 
-    deleteButton = document.createElement('button')
-    okButton = document.createElement('button')
+    deleteButton = document.createElement('div')
+    okButton = document.createElement('div')
 
     # Create text to buttons/elements and append them to right element
 
@@ -76,9 +76,21 @@ logerApp = {
     # Add classname to elements alá BEM-syntax
 
     table.className = 'work-out-conatiner__table-add'
-    deleteButton.className = 'work-out-conatiner__table-add__delete-Button'
-    okButton.className = 'work-out-conatiner__table-add__ok-button'
+    tdDeleteButton.className = 'work-out-conatiner__table-add__delete-button'
+    tdOkButton.className = 'work-out-conatiner__table-add__ok-button'
+    tdName.className = 'work-out-conatiner__table-add__name-input'
+    tdQuantity.className = 'work-out-conatiner__table-add__quanity-input'
+    tdworkOutMultiplication.className = 'work-out-conatiner__table-add__workout-multiplication-input'
+    tdMultiSymbol.className =  'work-out-conatiner__table-add__td-muliply-symbol'
 
+    # Deside quantity of colspan to every td in the table
+
+    tdName.colSpan = 20
+    tdQuantity.colSpan = 8
+    tdMultiSymbol.colSpan = 4
+    tdworkOutMultiplication.colSpan = 4
+    tdDeleteButton.colSpan = 10
+    tdOkButton.colSpan = 10
 
     # Append every element to it's parent
 

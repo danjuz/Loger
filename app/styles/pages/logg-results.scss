@@ -24,3 +24,66 @@
     margin-top: 12px;
   }
 }
+
+.work-out-conatiner{
+  background-color: #98DECD;
+  max-width: 90%;
+  height: 160px;
+  margin: 10px auto 10px auto;
+  padding: 30px;
+}
+
+.work-out-conatiner__table-add{
+  //width: 90%;
+  margin: 0 auto;
+
+  input{
+    height: 50px;
+    width: 100%;
+    border: 0;
+    padding: 0;;
+    text-align: center;
+    font-size: 1.5em;
+  }
+
+  td{
+    text-align: center;
+    padding-bottom: 5px;
+  }
+}
+
+.work-out-conatiner__table-add__name-input{
+  width: 100%;
+}
+
+.work-out-conatiner__table-add__quanity-input{
+  width: 40%;
+}
+
+.work-out-conatiner__table-add__td-muliply-symbol{
+  width: 20%;
+}
+
+.work-out-conatiner__table-add__workout-multiplication-input{
+  width: 40%;
+}
+
+.work-out-conatiner__table-add__delete-button{
+  width: 50%;
+  height: 50px;
+  background-color: #EF6249;
+
+  &:hover{
+    background-color: #AFAFAF;
+  }
+}
+
+.work-out-conatiner__table-add__ok-button{
+  width: 50%;
+  height: 50px;
+  background-color: #59A090;
+
+  &:hover{
+    background-color: #A4E7D1;
+  }
+}

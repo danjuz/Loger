@@ -10,14 +10,13 @@
     init: function() {
       return this.bindEvents();
     },
-    bindevents: function() {
+    bindEvents: function() {
       var self;
       self = this;
       this.dateOfToday();
       if (window.location.href === 'http://localhost:9000/') {
         this.loginButton.addEventListener('click', function() {
-          self.redirect();
-          return console.log('HEJHEJHJE');
+          return self.redirect();
         });
       }
       if (window.location.href === 'http://www.localhost:9000/logg-results.html') {
@@ -46,9 +45,13 @@
         }
       });
     },
-    addWorkOut: function() {}
+    addWorkOut: function() {
+      return this.workOutContainer.innerHTML = "hejhej";
+    }
   };
 
-  logerApp.bindevents();
+  document.addEventListener("DOMContentLoaded", function() {
+    return logerApp.init();
+  });
 
 }).call(this);

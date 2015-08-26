@@ -9,19 +9,17 @@ logerApp = {
   init: ->
     this.bindEvents()
 
-  bindevents: ->
+  bindEvents: ->
     self = this
     this.dateOfToday()
 
     if (window.location.href == 'http://localhost:9000/')
       this.loginButton.addEventListener 'click', ->
         self.redirect()
-        console.log 'HEJHEJHJE'
 
     if (window.location.href == 'http://www.localhost:9000/logg-results.html')
       this.addButton.addEventListener 'click', ->
         self.addWorkOut()
-
 
   dateOfToday: ->
     today = new Date()
@@ -43,9 +41,10 @@ logerApp = {
     return
 
   addWorkOut: ->
-
-
-
+    # here is were the magic happends. Ul li list with workout scheme and count
+    this.workOutContainer.innerHTML = "hejhej"
 
   }
-logerApp.bindevents()
+
+document.addEventListener "DOMContentLoaded", ->
+  logerApp.init()

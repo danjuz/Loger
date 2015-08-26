@@ -1,0 +1,20 @@
+.header__main-container-logo a {
+  animation: 4s infinite colorchange;
+}
+@keyframes colorchange{
+  0% {
+    color: red;
+  }
+  25% {
+    color: green;
+  }
+  50% {
+    color: yellow;
+  }
+  75% {
+    color: yellow;
+  }
+  100% {
+    color: red;
+  }
+}

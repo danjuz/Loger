@@ -5,6 +5,7 @@ logerApp = {
   loginButton: document.querySelector('.register-login-container')
   addButton: document.querySelector('.add-container__button')
   workOutContainer: document.querySelector('.work-out-conatiner')
+  connectionToFirebase: new Firebase("https://loger.firebaseio.com/")
 
   init: ->
     this.bindEvents()
@@ -14,11 +15,11 @@ logerApp = {
     this.dateOfToday()
 
     if (window.location.href == 'http://localhost:9000/')
-      this.loginButton.addEventListener 'click', ->
+      self.loginButton.addEventListener 'click', ->
         self.redirectWithFBAndFB()
 
     if (window.location.href == 'http://www.localhost:9000/logg-results.html')
-      this.addButton.addEventListener 'click', ->
+      self.addButton.addEventListener 'click', ->
         self.addEditWorkOut()
 
   dateOfToday: ->
@@ -30,15 +31,36 @@ logerApp = {
     dateLocation.innerHTML = "<div class='date-area__date'>" + date + "</div><br/><div class='date-area__month'>" + dateNames[month] + "</div>"
 
   redirectWithFBAndFB: ->
+    self = this
     ref = new Firebase('https://loger.firebaseio.com')
     ref.authWithOAuthPopup 'facebook', (error, authData) ->
       if error
         console.log 'Login Failed!', error
       else
-        console.log 'Authenticated successfully with payload:', authData
-        window.location.href = 'http://www.localhost:9000/logg-results.html';
+        console.log 'authData.facebook', authData.facebook
+        self.saveToFirebase(authData)
+        #window.location.href = 'http://www.localhost:9000/logg-results.html';
 
-    return
+      return
+
+  saveToFirebase: (fbValue) ->
+
+    #get the information from redirectWithFBAndFB function
+    fbInformation = fbValue
+    ref = this.connectionToFirebase
+    console.log 'information from another function ',  fbInformation
+
+    usersRef = ref.child('users')
+
+    usersRef.set
+      information:
+        id: fbInformation.facebook.id
+        displayName: fbInformation.facebook.displayName
+        first_name: fbInformation.facebook.cachedUserProfile.first_name
+        last_name:  fbInformation.facebook.cachedUserProfile.last_name
+        profileImageURL: fbInformation.facebook.profileImageURL
+        gender: fbInformation.facebook.cachedUserProfile.gender
+
 
   addEditWorkOut: ->
 

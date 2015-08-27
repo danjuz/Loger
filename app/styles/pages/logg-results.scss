@@ -18,6 +18,10 @@
   height: 60px;
   border-radius: 100%;
 
+  &:hover{
+    background-color: #A6D9CC;
+  }
+
   img{
     height: 35px;
     margin: 12px 0 0 12px;

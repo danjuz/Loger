@@ -7,6 +7,7 @@
     loginButton: document.querySelector('.register-login-container'),
     addButton: document.querySelector('.add-container__button'),
     workOutContainer: document.querySelector('.work-out-conatiner'),
+    connectionToFirebase: new Firebase("https://loger.firebaseio.com/"),
     init: function() {
       return this.bindEvents();
     },
@@ -15,12 +16,12 @@
       self = this;
       this.dateOfToday();
       if (window.location.href === 'http://localhost:9000/') {
-        this.loginButton.addEventListener('click', function() {
+        self.loginButton.addEventListener('click', function() {
           return self.redirectWithFBAndFB();
         });
       }
       if (window.location.href === 'http://www.localhost:9000/logg-results.html') {
-        return this.addButton.addEventListener('click', function() {
+        return self.addButton.addEventListener('click', function() {
           return self.addEditWorkOut();
         });
       }
@@ -34,14 +35,32 @@
       return dateLocation.innerHTML = "<div class='date-area__date'>" + date + "</div><br/><div class='date-area__month'>" + dateNames[month] + "</div>";
     },
     redirectWithFBAndFB: function() {
-      var ref;
+      var ref, self;
+      self = this;
       ref = new Firebase('https://loger.firebaseio.com');
-      ref.authWithOAuthPopup('facebook', function(error, authData) {
+      return ref.authWithOAuthPopup('facebook', function(error, authData) {
         if (error) {
-          return console.log('Login Failed!', error);
+          console.log('Login Failed!', error);
         } else {
-          console.log('Authenticated successfully with payload:', authData);
-          return window.location.href = 'http://www.localhost:9000/logg-results.html';
+          console.log('authData.facebook', authData.facebook);
+          self.saveToFirebase(authData);
+        }
+      });
+    },
+    saveToFirebase: function(fbValue) {
+      var fbInformation, ref, usersRef;
+      fbInformation = fbValue;
+      ref = this.connectionToFirebase;
+      console.log('information from another function ', fbInformation);
+      usersRef = ref.child('users');
+      return usersRef.set({
+        information: {
+          id: fbInformation.facebook.id,
+          displayName: fbInformation.facebook.displayName,
+          first_name: fbInformation.facebook.cachedUserProfile.first_name,
+          last_name: fbInformation.facebook.cachedUserProfile.last_name,
+          profileImageURL: fbInformation.facebook.profileImageURL,
+          gender: fbInformation.facebook.cachedUserProfile.gender
         }
       });
     },

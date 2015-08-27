@@ -44,6 +44,7 @@ logerApp = {
 
     # Create every needed elements to create the dynamic list of workout.
 
+    background = document.createElement('div')
     table = document.createElement('table')
 
     trName = document.createElement('tr')
@@ -75,6 +76,7 @@ logerApp = {
 
     # Add classname to elements alá BEM-syntax
 
+    background.className = 'work-out-container--background'
     table.className = 'work-out-conatiner__table-add'
     tdDeleteButton.className = 'work-out-conatiner__table-add__delete-button'
     tdOkButton.className = 'work-out-conatiner__table-add__ok-button'
@@ -82,6 +84,7 @@ logerApp = {
     tdQuantity.className = 'work-out-conatiner__table-add__quanity-input'
     tdworkOutMultiplication.className = 'work-out-conatiner__table-add__workout-multiplication-input'
     tdMultiSymbol.className =  'work-out-conatiner__table-add__td-muliply-symbol'
+
 
     # Deside quantity of colspan to every td in the table
 
@@ -111,7 +114,8 @@ logerApp = {
     table.appendChild(trQuantity)
     table.appendChild(trButtons)
 
-    this.workOutContainer.appendChild(table)
+    background.appendChild(table)
+    this.workOutContainer.appendChild(background)
 
   }
 

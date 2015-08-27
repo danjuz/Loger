@@ -46,7 +46,8 @@
       });
     },
     addEditWorkOut: function() {
-      var deleteButton, deleteButtonText, multiSymbol, nameInput, okButton, okButtonText, quantityInput, table, tdDeleteButton, tdMultiSymbol, tdName, tdOkButton, tdQuantity, tdworkOutMultiplication, trButtons, trName, trQuantity, workOutMultiplicationInput;
+      var background, deleteButton, deleteButtonText, multiSymbol, nameInput, okButton, okButtonText, quantityInput, table, tdDeleteButton, tdMultiSymbol, tdName, tdOkButton, tdQuantity, tdworkOutMultiplication, trButtons, trName, trQuantity, workOutMultiplicationInput;
+      background = document.createElement('div');
       table = document.createElement('table');
       trName = document.createElement('tr');
       trQuantity = document.createElement('tr');
@@ -68,6 +69,7 @@
       deleteButton.appendChild(deleteButtonText);
       okButton.appendChild(okButtonText);
       tdMultiSymbol.appendChild(multiSymbol);
+      background.className = 'work-out-container--background';
       table.className = 'work-out-conatiner__table-add';
       tdDeleteButton.className = 'work-out-conatiner__table-add__delete-button';
       tdOkButton.className = 'work-out-conatiner__table-add__ok-button';
@@ -95,7 +97,8 @@
       table.appendChild(trName);
       table.appendChild(trQuantity);
       table.appendChild(trButtons);
-      return this.workOutContainer.appendChild(table);
+      background.appendChild(table);
+      return this.workOutContainer.appendChild(background);
     }
   };
 

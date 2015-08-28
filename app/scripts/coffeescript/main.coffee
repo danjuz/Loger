@@ -2,15 +2,19 @@ dateNames = ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt
 
 logerApp = {
 
+  connectionToFirebase: new Firebase("https://loger.firebaseio.com/")
   loginButton: document.querySelector('.register-login-container')
   addButton: document.querySelector('.add-container__button')
-  workOutContainer: document.querySelector('.work-out-conatiner')
-  connectionToFirebase: new Firebase("https://loger.firebaseio.com/")
+
+  okButton: document.querySelector('.work-out-container__table-add__ok-button')
+  workOutContainer: document.querySelector('.work-out-container')
+  workOutTable: document.querySelector('.work-out-container--background')
+
 
   init: ->
-    this.bindEvents()
+    this.bindInitialEvents()
 
-  bindEvents: ->
+  bindInitialEvents: ->
     self = this
     this.dateOfToday()
 
@@ -21,6 +25,25 @@ logerApp = {
     if (window.location.href == 'http://www.localhost:9000/logg-results.html')
       self.addButton.addEventListener 'click', ->
         self.addEditWorkOut()
+
+        if (document.querySelector('.work-out-container--background'))
+          allWorkOutOkButtons = document.querySelectorAll('.work-out-container__table-add__ok-button')
+          allWorkOutDeleteButtons = document.querySelectorAll('.work-out-container__table-add__delete-button')
+
+          console.log 'allWorkOut result ', allWorkOutOkButtons
+          console.log 'allWorkOut result ', allWorkOutDeleteButtons
+
+          for i in [0 ... allWorkOutOkButtons.length]
+            allWorkOutOkButtons[i].addEventListener 'click', (e)->
+              self.showFromDb(e)
+
+          for i in [0 ... allWorkOutDeleteButtons.length]
+            allWorkOutDeleteButtons[i].addEventListener 'click', (e)->
+              self.deleteIt(e)
+
+
+        document.querySelector('.work-out-container__table-add__delete-button').addEventListener 'click', (e)->
+          self.deleteIt(e)
 
   dateOfToday: ->
     today = new Date()
@@ -39,7 +62,7 @@ logerApp = {
       else
         console.log 'authData.facebook', authData.facebook
         self.saveToFirebase(authData)
-        #window.location.href = 'http://www.localhost:9000/logg-results.html';
+        window.location.href = 'http://www.localhost:9000/logg-results.html';
 
       return
 
@@ -48,11 +71,9 @@ logerApp = {
     #get the information from redirectWithFBAndFB function
     fbInformation = fbValue
     ref = this.connectionToFirebase
-    console.log 'information from another function ',  fbInformation
-
     usersRef = ref.child('users')
 
-    usersRef.set
+    usersRef.push
       information:
         id: fbInformation.facebook.id
         displayName: fbInformation.facebook.displayName
@@ -61,8 +82,9 @@ logerApp = {
         profileImageURL: fbInformation.facebook.profileImageURL
         gender: fbInformation.facebook.cachedUserProfile.gender
 
-
   addEditWorkOut: ->
+    this.bindEvents
+    self = this
 
     # Create every needed elements to create the dynamic list of workout.
 
@@ -99,13 +121,15 @@ logerApp = {
     # Add classname to elements alá BEM-syntax
 
     background.className = 'work-out-container--background'
-    table.className = 'work-out-conatiner__table-add'
-    tdDeleteButton.className = 'work-out-conatiner__table-add__delete-button'
-    tdOkButton.className = 'work-out-conatiner__table-add__ok-button'
-    tdName.className = 'work-out-conatiner__table-add__name-input'
-    tdQuantity.className = 'work-out-conatiner__table-add__quanity-input'
-    tdworkOutMultiplication.className = 'work-out-conatiner__table-add__workout-multiplication-input'
-    tdMultiSymbol.className =  'work-out-conatiner__table-add__td-muliply-symbol'
+    table.className = 'work-out-container__table'
+    tdDeleteButton.className = 'work-out-container__table-add__delete-button'
+    tdOkButton.className = 'work-out-container__table-add__ok-button'
+    tdName.className = 'work-out-container__table-add__name-input'
+    tdQuantity.className = 'work-out-container__table-add__quanity-input'
+    tdworkOutMultiplication.className = 'work-out-container__table-add__workout-multiplication-input'
+    tdMultiSymbol.className =  'work-out-container__table-add__td-muliply-symbol'
+    okButton.className = 'work-out-container__table-add__div-ok_button'
+    deleteButton.className = 'work-out-container__table-add__div-delete-button'
 
 
     # Deside quantity of colspan to every td in the table
@@ -139,7 +163,27 @@ logerApp = {
     background.appendChild(table)
     this.workOutContainer.appendChild(background)
 
-  }
+    if (nameInput)
+      nameInput.focus()
 
+    #Have to place it here because it was just created above
+
+  showFromDb: (e) ->
+      console.log 'HELLLOOO from showFromDb ',e
+      ref = this.connectionToFirebase
+
+      ###
+      ref.on "value", (snapshot) ->
+        console.log 'TESTING MOTHERF ',snapshot.val()
+        (errorObject) ->
+          console.log 'The read failed:' + errorObject.code
+      ###
+
+  deleteIt: (e) ->
+    console.log e
+    e.target.parentNode.parentNode.parentNode.remove()
+
+
+}
 document.addEventListener 'DOMContentLoaded', ->
   logerApp.init()

@@ -10,6 +10,8 @@
     okButton: document.querySelector('.work-out-container__table-add__ok-button'),
     workOutContainer: document.querySelector('.work-out-container'),
     workOutTable: document.querySelector('.work-out-container--background'),
+    playButton: document.querySelector('.add-container__form__play-button'),
+    pauseButton: document.querySelector('.add-container__form__pause-button'),
     init: function() {
       return this.bindInitialEvents();
     },
@@ -27,10 +29,9 @@
           var allWorkOutDeleteButtons, allWorkOutOkButtons, i, j, k, ref1, ref2;
           self.addEditWorkOut();
           if (document.querySelector('.work-out-container--background')) {
+            self.reverseList();
             allWorkOutOkButtons = document.querySelectorAll('.work-out-container__table-add__ok-button');
             allWorkOutDeleteButtons = document.querySelectorAll('.work-out-container__table-add__delete-button');
-            console.log('allWorkOut result ', allWorkOutOkButtons);
-            console.log('allWorkOut result ', allWorkOutDeleteButtons);
             for (i = j = 0, ref1 = allWorkOutOkButtons.length; 0 <= ref1 ? j < ref1 : j > ref1; i = 0 <= ref1 ? ++j : --j) {
               allWorkOutOkButtons[i].addEventListener('click', function(e) {
                 return self.showFromDb(e);
@@ -64,7 +65,6 @@
         if (error) {
           console.log('Login Failed!', error);
         } else {
-          console.log('authData.facebook', authData.facebook);
           self.saveToFirebase(authData);
           window.location.href = 'http://www.localhost:9000/logg-results.html';
         }
@@ -148,9 +148,14 @@
         return nameInput.focus();
       }
     },
+    reverseList: function() {
+      var allWorkOut;
+      return allWorkOut = document.querySelectorAll('.work-out-container--background');
+    },
     showFromDb: function(e) {
       var ref;
-      console.log('HELLLOOO from showFromDb ', e);
+      console.log('Number input fields ', e.target.parentNode.parentNode.previousElementSibling.firstChild.childNode);
+      console.log('Name input fields ', e.target.parentNode.parentNode.previousElementSibling.previousElementSibling.firstChild);
       return ref = this.connectionToFirebase;
 
       /*
@@ -161,8 +166,28 @@
        */
     },
     deleteIt: function(e) {
-      console.log(e);
       return e.target.parentNode.parentNode.parentNode.remove();
+    },
+    stopWatch: function() {
+      var c, t, timer_is_on;
+      c = 0;
+      t;
+      timer_is_on = 0;
+      document.getElementById('txt').value = c;
+      c = c + 1;
+      t = setTimeout((function() {
+        timedCount();
+      }), 1000);
+      return doTimer(function() {
+        if (!timer_is_on) {
+          timer_is_on = 1;
+          timedCount();
+        }
+        return stopCount(function() {
+          clearTimeout(t);
+          return timer_is_on = 0;
+        });
+      });
     }
   };
 

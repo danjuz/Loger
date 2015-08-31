@@ -1,14 +1,15 @@
 // bower:scss
 // endbower
+@import 'helpers/mixins';
+@import 'helpers/spacing-size';
+@import 'helpers/colors';
 
 @import 'base/normalize';
 @import 'layout/general';
 @import 'pages/index';
 @import 'pages/logg-results';
 
-@import 'helpers/spacing';
-
-
 @import 'components/header';
 @import 'components/footer';
 @import 'components/logo';
+@import 'components/timer';

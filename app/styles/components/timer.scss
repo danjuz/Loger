@@ -1,0 +1,42 @@
+.add-container__form-container{
+  margin: 1em;
+  //@include centerer(true, false)
+  position: relative;
+}
+
+
+.add-container__form-container__form{
+  @include center-block;
+  text-align: center;
+  background-color: $behind-modules-color;
+  border-radius: 50px 50px;
+  padding: 1em;
+  max-width: 600px;
+}
+
+.add-container__form-container__form__play-button{
+  background-image: url('../../images/play.png');
+  background-size: contain;
+  display: inline-block;
+  &:hover{
+  -webkit-filter: invert(30%);  }
+}
+
+.add-container__form__pause-button{
+  background-image: url('../../images/pause.png');
+  background-size: contain;
+  display: inline-block;
+  &:hover{
+  -webkit-filter: invert(30%);
+  }
+}
+
+.add-container__form-container__form__timer-input{
+  background-color: $behind-modules-color;
+  border: 0;
+  width: 170px;
+  font-size: 2em;
+  margin: auto;
+  color: $text-color-in-modules;
+  text-align: center;
+}

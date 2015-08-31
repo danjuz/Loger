@@ -9,6 +9,8 @@ logerApp = {
   okButton: document.querySelector('.work-out-container__table-add__ok-button')
   workOutContainer: document.querySelector('.work-out-container')
   workOutTable: document.querySelector('.work-out-container--background')
+  playButton: document.querySelector('.add-container__form__play-button')
+  pauseButton: document.querySelector('.add-container__form__pause-button')
 
 
   init: ->
@@ -26,12 +28,15 @@ logerApp = {
       self.addButton.addEventListener 'click', ->
         self.addEditWorkOut()
 
+
         if (document.querySelector('.work-out-container--background'))
+          self.reverseList()
+
           allWorkOutOkButtons = document.querySelectorAll('.work-out-container__table-add__ok-button')
           allWorkOutDeleteButtons = document.querySelectorAll('.work-out-container__table-add__delete-button')
 
-          console.log 'allWorkOut result ', allWorkOutOkButtons
-          console.log 'allWorkOut result ', allWorkOutDeleteButtons
+          # console.log 'allWorkOut result ', allWorkOutOkButtons
+          # console.log 'allWorkOut result ', allWorkOutDeleteButtons
 
           for i in [0 ... allWorkOutOkButtons.length]
             allWorkOutOkButtons[i].addEventListener 'click', (e)->
@@ -40,6 +45,8 @@ logerApp = {
           for i in [0 ... allWorkOutDeleteButtons.length]
             allWorkOutDeleteButtons[i].addEventListener 'click', (e)->
               self.deleteIt(e)
+
+
 
 
         document.querySelector('.work-out-container__table-add__delete-button').addEventListener 'click', (e)->
@@ -60,7 +67,7 @@ logerApp = {
       if error
         console.log 'Login Failed!', error
       else
-        console.log 'authData.facebook', authData.facebook
+        #console.log 'authData.facebook', authData.facebook
         self.saveToFirebase(authData)
         window.location.href = 'http://www.localhost:9000/logg-results.html';
 
@@ -166,23 +173,46 @@ logerApp = {
     if (nameInput)
       nameInput.focus()
 
-    #Have to place it here because it was just created above
+  reverseList: ->
+    #This function is not done.
+    allWorkOut = document.querySelectorAll('.work-out-container--background')
 
   showFromDb: (e) ->
-      console.log 'HELLLOOO from showFromDb ',e
-      ref = this.connectionToFirebase
+    console.log 'Number input fields ',  e.target.parentNode.parentNode.previousElementSibling.firstChild.childNode
+    console.log 'Name input fields ',  e.target.parentNode.parentNode.previousElementSibling.previousElementSibling.firstChild
+    ref = this.connectionToFirebase
 
-      ###
-      ref.on "value", (snapshot) ->
-        console.log 'TESTING MOTHERF ',snapshot.val()
-        (errorObject) ->
-          console.log 'The read failed:' + errorObject.code
-      ###
+    ###
+    ref.on "value", (snapshot) ->
+      console.log 'TESTING MOTHERF ',snapshot.val()
+      (errorObject) ->
+        console.log 'The read failed:' + errorObject.code
+    ###
 
   deleteIt: (e) ->
-    console.log e
+    #This delete the whole container with input fields and buttons
     e.target.parentNode.parentNode.parentNode.remove()
 
+  stopWatch: () ->
+     c = 0
+     t
+     timer_is_on = 0
+
+     document.getElementById('txt').value = c;
+     c = c+1;
+     t = setTimeout((->
+      timedCount()
+      return
+      ), 1000)
+
+     doTimer ->
+      if !timer_is_on
+        timer_is_on = 1;
+        timedCount()
+
+      stopCount ->
+        clearTimeout(t)
+        timer_is_on = 0
 
 }
 document.addEventListener 'DOMContentLoaded', ->

@@ -20,3 +20,8 @@ li{
   padding-left: 6.5%;
 
 }
+
+//change placeholder inside input field
+::-webkit-input-placeholder {
+ color: $text-color-in-modules;
+}

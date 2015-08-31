@@ -9,8 +9,9 @@ logerApp = {
   okButton: document.querySelector('.work-out-container__table-add__ok-button')
   workOutContainer: document.querySelector('.work-out-container')
   workOutTable: document.querySelector('.work-out-container--background')
-  playButton: document.querySelector('.add-container__form__play-button')
+  playButton: document.querySelector('.add-container__form-container__form__play-button')
   pauseButton: document.querySelector('.add-container__form__pause-button')
+  stopWatchInput: document.querySelector('.add-container__form-container__form__timer-input')
 
 
   init: ->
@@ -25,6 +26,7 @@ logerApp = {
         self.redirectWithFBAndFB()
 
     if (window.location.href == 'http://www.localhost:9000/logg-results.html')
+      self.stopWatch()
       self.addButton.addEventListener 'click', ->
         self.addEditWorkOut()
 
@@ -183,10 +185,12 @@ logerApp = {
     ref = this.connectionToFirebase
 
     ###
+
     ref.on "value", (snapshot) ->
       console.log 'TESTING MOTHERF ',snapshot.val()
       (errorObject) ->
         console.log 'The read failed:' + errorObject.code
+
     ###
 
   deleteIt: (e) ->
@@ -194,25 +198,48 @@ logerApp = {
     e.target.parentNode.parentNode.parentNode.remove()
 
   stopWatch: () ->
-     c = 0
-     t
-     timer_is_on = 0
+    self = this
 
-     document.getElementById('txt').value = c;
-     c = c+1;
-     t = setTimeout((->
-      timedCount()
-      return
-      ), 1000)
+    timer_is_on = 0
+    sekTime = 0
+    minTime = 0
+    minGost = ''
+    sekGost = ''
+    zeroGost = ''
+    t = t
 
-     doTimer ->
-      if !timer_is_on
-        timer_is_on = 1;
+    timedCount = ->
+      sekTime += 1
+
+      if (sekTime >= 10)
+        sekGost = ''
+      if (sekTime <= 10)
+        sekGost = '0'
+      if(minTime >= 10)
+        minGost = ''
+      if(minTime <= 10)
+        minGost = '0'
+
+      if(sekTime >= 60)
+        sekTime = 0
+        minTime += 1
+
+      self.stopWatchInput.value = zeroGost + minGost + minTime + ':' + zeroGost + sekGost + sekTime
+
+      t = setTimeout((->
+        timedCount()
+        return
+        ), 1000)
+
+
+    this.playButton.addEventListener 'click', (e)->
+      if (!timer_is_on)
+        timer_is_on = 1
         timedCount()
 
-      stopCount ->
-        clearTimeout(t)
-        timer_is_on = 0
+    this.pauseButton.addEventListener 'click', (e)->
+      clearTimeout(t)
+      timer_is_on = 0
 
 }
 document.addEventListener 'DOMContentLoaded', ->

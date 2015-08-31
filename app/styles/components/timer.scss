@@ -1,9 +1,7 @@
 .add-container__form-container{
   margin: 1em;
-  //@include centerer(true, false)
   position: relative;
 }
-
 
 .add-container__form-container__form{
   @include center-block;
@@ -37,6 +35,6 @@
   width: 170px;
   font-size: 2em;
   margin: auto;
-  color: $text-color-in-modules;
+  color: $white;
   text-align: center;
 }

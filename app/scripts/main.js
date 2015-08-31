@@ -10,8 +10,9 @@
     okButton: document.querySelector('.work-out-container__table-add__ok-button'),
     workOutContainer: document.querySelector('.work-out-container'),
     workOutTable: document.querySelector('.work-out-container--background'),
-    playButton: document.querySelector('.add-container__form__play-button'),
+    playButton: document.querySelector('.add-container__form-container__form__play-button'),
     pauseButton: document.querySelector('.add-container__form__pause-button'),
+    stopWatchInput: document.querySelector('.add-container__form-container__form__timer-input'),
     init: function() {
       return this.bindInitialEvents();
     },
@@ -25,6 +26,7 @@
         });
       }
       if (window.location.href === 'http://www.localhost:9000/logg-results.html') {
+        self.stopWatch();
         return self.addButton.addEventListener('click', function() {
           var allWorkOutDeleteButtons, allWorkOutOkButtons, i, j, k, ref1, ref2;
           self.addEditWorkOut();
@@ -159,6 +161,7 @@
       return ref = this.connectionToFirebase;
 
       /*
+      
       ref.on "value", (snapshot) ->
         console.log 'TESTING MOTHERF ',snapshot.val()
         (errorObject) ->
@@ -169,24 +172,47 @@
       return e.target.parentNode.parentNode.parentNode.remove();
     },
     stopWatch: function() {
-      var c, t, timer_is_on;
-      c = 0;
-      t;
+      var minGost, minTime, sekGost, sekTime, self, t, timedCount, timer_is_on, zeroGost;
+      self = this;
       timer_is_on = 0;
-      document.getElementById('txt').value = c;
-      c = c + 1;
-      t = setTimeout((function() {
-        timedCount();
-      }), 1000);
-      return doTimer(function() {
+      sekTime = 0;
+      minTime = 0;
+      minGost = '';
+      sekGost = '';
+      zeroGost = '';
+      t = t;
+      timedCount = function() {
+        sekTime += 1;
+        if (sekTime >= 10) {
+          sekGost = '';
+        }
+        if (sekTime <= 10) {
+          sekGost = '0';
+        }
+        if (minTime >= 10) {
+          minGost = '';
+        }
+        if (minTime <= 10) {
+          minGost = '0';
+        }
+        if (sekTime >= 60) {
+          sekTime = 0;
+          minTime += 1;
+        }
+        self.stopWatchInput.value = zeroGost + minGost + minTime + ':' + zeroGost + sekGost + sekTime;
+        return t = setTimeout((function() {
+          timedCount();
+        }), 1000);
+      };
+      this.playButton.addEventListener('click', function(e) {
         if (!timer_is_on) {
           timer_is_on = 1;
-          timedCount();
+          return timedCount();
         }
-        return stopCount(function() {
-          clearTimeout(t);
-          return timer_is_on = 0;
-        });
+      });
+      return this.pauseButton.addEventListener('click', function(e) {
+        clearTimeout(t);
+        return timer_is_on = 0;
       });
     }
   };

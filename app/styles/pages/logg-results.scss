@@ -24,14 +24,15 @@
 
   img{
     height: 35px;
-    margin: 12px 0 0 12px;
+    margin: 12px 12px;
   }
 }
 
 .work-out-container--background{
+  position: relative;
   background-color: #98DECD;
-  padding: 0 1em;
-  margin: 1em auto;
+  padding: 1.5em 1em;
+  margin: 1em 1em;
 }
 
 .work-out-container__table{
@@ -86,4 +87,49 @@
   &:hover{
     background-color: #A4E7D1;
   }
+}
+
+.show-work-out-container__table{
+  margin: 1em auto;
+  color: #C5FBF3;
+  font-size: 2em;
+
+  td{
+    text-align: center;
+    padding-bottom: 5px;
+  }
+
+
+}
+.show-work-out-container__table-add__name{
+  width: 100%;
+  color: $white;
+
+
+}
+.show-work-out-container__table-add__quanity{
+  width: 40%;
+
+}
+.show-work-out-container__table-add__workout-multiplication{
+  width: 20%;
+
+}
+.show-work-out-container__table-add__td-muliply-symbol{
+  width: 40%;
+
+}
+
+.show-work-out-container__table-add__edit-button{
+  background-image: url(../../images/edit.png);
+  background-size: cover;
+  width: 25px;
+  height: 25px;
+  position: absolute;
+  right: 1%;
+  top: 1%;
+}
+
+.hidden{
+  display: none;
 }

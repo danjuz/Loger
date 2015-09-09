@@ -9,10 +9,13 @@
     addButton: document.querySelector('.add-container__button'),
     okButton: document.querySelector('.work-out-container__table-add__ok-button'),
     workOutContainer: document.querySelector('.work-out-container'),
-    workOutTable: document.querySelector('.work-out-container--background'),
+    workOutTable: document.querySelectorAll('.work-out-container--background'),
     playButton: document.querySelector('.add-container__form-container__form__play-button'),
     pauseButton: document.querySelector('.add-container__form__pause-button'),
     stopWatchInput: document.querySelector('.add-container__form-container__form__timer-input'),
+    nameInput: document.querySelectorAll('.work-out-container__table-add__name-input'),
+    quantitytInput: document.querySelectorAll('.work-out-container__table-add__quanity-input'),
+    multiInput: document.querySelectorAll('.work-out-container__table-add__workout-multiplication-input'),
     init: function() {
       return this.bindInitialEvents();
     },
@@ -28,7 +31,7 @@
       if (window.location.href === 'http://www.localhost:9000/logg-results.html') {
         self.stopWatch();
         return self.addButton.addEventListener('click', function() {
-          var allWorkOutDeleteButtons, allWorkOutOkButtons, i, j, k, ref1, ref2;
+          var allWorkOutDeleteButtons, allWorkOutOkButtons, i, j, k, ref1, ref2, results;
           self.addEditWorkOut();
           if (document.querySelector('.work-out-container--background')) {
             self.reverseList();
@@ -36,18 +39,17 @@
             allWorkOutDeleteButtons = document.querySelectorAll('.work-out-container__table-add__delete-button');
             for (i = j = 0, ref1 = allWorkOutOkButtons.length; 0 <= ref1 ? j < ref1 : j > ref1; i = 0 <= ref1 ? ++j : --j) {
               allWorkOutOkButtons[i].addEventListener('click', function(e) {
-                return self.showFromDb(e);
+                return self.noEditMode(e);
               });
             }
+            results = [];
             for (i = k = 0, ref2 = allWorkOutDeleteButtons.length; 0 <= ref2 ? k < ref2 : k > ref2; i = 0 <= ref2 ? ++k : --k) {
-              allWorkOutDeleteButtons[i].addEventListener('click', function(e) {
+              results.push(allWorkOutDeleteButtons[i].addEventListener('click', function(e) {
                 return self.deleteIt(e);
-              });
+              }));
             }
+            return results;
           }
-          return document.querySelector('.work-out-container__table-add__delete-button').addEventListener('click', function(e) {
-            return self.deleteIt(e);
-          });
         });
       }
     },
@@ -154,22 +156,56 @@
       var allWorkOut;
       return allWorkOut = document.querySelectorAll('.work-out-container--background');
     },
-    showFromDb: function(e) {
-      var ref;
-      console.log('Number input fields ', e.target.parentNode.parentNode.previousElementSibling.firstChild.childNode);
-      console.log('Name input fields ', e.target.parentNode.parentNode.previousElementSibling.previousElementSibling.firstChild);
-      return ref = this.connectionToFirebase;
-
-      /*
-      
-      ref.on "value", (snapshot) ->
-        console.log 'TESTING MOTHERF ',snapshot.val()
-        (errorObject) ->
-          console.log 'The read failed:' + errorObject.code
-       */
+    noEditMode: function(e) {
+      var backgroundElement, editButton, multiSymbol, nameInput, nameInputValue, quantityInput, quantityInputValue, repQuantityValue, self, table, tableElement, tdMultiSymbol, tdName, tdQuantity, tdworkOutMultiplication, trButtons, trName, trQuantity, workOutMultiplicationInput;
+      self = this;
+      nameInputValue = e.target.parentElement.parentElement.parentElement.childNodes[0].childNodes[0].childNodes[0].value;
+      quantityInputValue = e.target.parentElement.parentElement.parentElement.childNodes[1].childNodes[0].childNodes[0].value;
+      repQuantityValue = e.target.parentElement.parentElement.parentElement.childNodes[1].childNodes[2].childNodes[0].value;
+      backgroundElement = e.target.parentElement.parentElement.parentElement.parentElement;
+      tableElement = e.target.parentElement.parentElement.parentElement;
+      tableElement.className = tableElement.className + " hidden";
+      table = document.createElement('table');
+      trName = document.createElement('tr');
+      trQuantity = document.createElement('tr');
+      trButtons = document.createElement('tr');
+      tdName = document.createElement('td');
+      tdQuantity = document.createElement('td');
+      tdworkOutMultiplication = document.createElement('td');
+      tdMultiSymbol = document.createElement('td');
+      nameInput = document.createElement('div');
+      quantityInput = document.createElement('div');
+      workOutMultiplicationInput = document.createElement('div');
+      editButton = document.createElement('div');
+      multiSymbol = document.createTextNode('X');
+      tdMultiSymbol.appendChild(multiSymbol);
+      table.className = 'show-work-out-container__table ';
+      tdName.className = 'show-work-out-container__table-add__name';
+      tdQuantity.className = 'show-work-out-container__table-add__quanity';
+      tdworkOutMultiplication.className = 'show-work-out-container__table-add__workout-multiplication';
+      tdMultiSymbol.className = 'show-work-out-container__table-add__td-muliply-symbol';
+      editButton.className = 'show-work-out-container__table-add__edit-button';
+      tdName.colSpan = 20;
+      tdQuantity.colSpan = 8;
+      tdMultiSymbol.colSpan = 4;
+      tdworkOutMultiplication.colSpan = 4;
+      tdName.appendChild(nameInput);
+      tdQuantity.appendChild(quantityInput);
+      tdworkOutMultiplication.appendChild(workOutMultiplicationInput);
+      trName.appendChild(tdName);
+      trQuantity.appendChild(tdQuantity);
+      trQuantity.appendChild(tdMultiSymbol);
+      trQuantity.appendChild(tdworkOutMultiplication);
+      table.appendChild(trName);
+      table.appendChild(trQuantity);
+      backgroundElement.appendChild(editButton);
+      backgroundElement.appendChild(table);
+      nameInput.innerHTML = nameInputValue;
+      quantityInput.innerHTML = quantityInputValue;
+      return workOutMultiplicationInput.innerHTML = repQuantityValue;
     },
     deleteIt: function(e) {
-      return e.target.parentNode.parentNode.parentNode.remove();
+      return e.target.parentNode.parentNode.parentNode.parentNode.remove();
     },
     stopWatch: function() {
       var minGost, minTime, sekGost, sekTime, self, t, timedCount, timer_is_on, zeroGost;

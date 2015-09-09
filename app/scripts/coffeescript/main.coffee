@@ -8,10 +8,14 @@ logerApp = {
 
   okButton: document.querySelector('.work-out-container__table-add__ok-button')
   workOutContainer: document.querySelector('.work-out-container')
-  workOutTable: document.querySelector('.work-out-container--background')
+  workOutTable: document.querySelectorAll('.work-out-container--background')
   playButton: document.querySelector('.add-container__form-container__form__play-button')
   pauseButton: document.querySelector('.add-container__form__pause-button')
   stopWatchInput: document.querySelector('.add-container__form-container__form__timer-input')
+
+  nameInput: document.querySelectorAll('.work-out-container__table-add__name-input')
+  quantitytInput: document.querySelectorAll('.work-out-container__table-add__quanity-input')
+  multiInput: document.querySelectorAll('.work-out-container__table-add__workout-multiplication-input')
 
 
   init: ->
@@ -37,22 +41,16 @@ logerApp = {
           allWorkOutOkButtons = document.querySelectorAll('.work-out-container__table-add__ok-button')
           allWorkOutDeleteButtons = document.querySelectorAll('.work-out-container__table-add__delete-button')
 
-          # console.log 'allWorkOut result ', allWorkOutOkButtons
-          # console.log 'allWorkOut result ', allWorkOutDeleteButtons
-
           for i in [0 ... allWorkOutOkButtons.length]
             allWorkOutOkButtons[i].addEventListener 'click', (e)->
-              self.showFromDb(e)
+              self.noEditMode(e)
 
           for i in [0 ... allWorkOutDeleteButtons.length]
             allWorkOutDeleteButtons[i].addEventListener 'click', (e)->
               self.deleteIt(e)
 
-
-
-
-        document.querySelector('.work-out-container__table-add__delete-button').addEventListener 'click', (e)->
-          self.deleteIt(e)
+          #document.querySelector('.work-out-container__table-add__delete-button').addEventListener 'click', (e)->
+          #  self.deleteIt(e)
 
   dateOfToday: ->
     today = new Date()
@@ -141,7 +139,7 @@ logerApp = {
     deleteButton.className = 'work-out-container__table-add__div-delete-button'
 
 
-    # Deside quantity of colspan to every td in the table
+    # Decide quantity of colspan to every td in the table
 
     tdName.colSpan = 20
     tdQuantity.colSpan = 8
@@ -179,23 +177,80 @@ logerApp = {
     #This function is not done.
     allWorkOut = document.querySelectorAll('.work-out-container--background')
 
-  showFromDb: (e) ->
-    console.log 'Number input fields ',  e.target.parentNode.parentNode.previousElementSibling.firstChild.childNode
-    console.log 'Name input fields ',  e.target.parentNode.parentNode.previousElementSibling.previousElementSibling.firstChild
-    ref = this.connectionToFirebase
+  noEditMode: (e) ->
+    self = this
 
-    ###
+    #Get and put input value into variables
+    nameInputValue = e.target.parentElement.parentElement.parentElement.childNodes[0].childNodes[0].childNodes[0].value
+    quantityInputValue = e.target.parentElement.parentElement.parentElement.childNodes[1].childNodes[0].childNodes[0].value
+    repQuantityValue = e.target.parentElement.parentElement.parentElement.childNodes[1].childNodes[2].childNodes[0].value
+    backgroundElement = e.target.parentElement.parentElement.parentElement.parentElement
 
-    ref.on "value", (snapshot) ->
-      console.log 'TESTING MOTHERF ',snapshot.val()
-      (errorObject) ->
-        console.log 'The read failed:' + errorObject.code
+    #Hide table
+    tableElement = e.target.parentElement.parentElement.parentElement
+    tableElement.className = tableElement.className + " hidden"
 
-    ###
+    #Create new table with correct information
+    table = document.createElement('table')
+
+    trName = document.createElement('tr')
+    trQuantity = document.createElement('tr')
+    trButtons = document.createElement('tr')
+
+    tdName = document.createElement('td')
+    tdQuantity = document.createElement('td')
+    tdworkOutMultiplication = document.createElement('td')
+    tdMultiSymbol = document.createElement('td')
+
+    nameInput = document.createElement('div')
+    quantityInput = document.createElement('div')
+    workOutMultiplicationInput = document.createElement('div')
+
+    editButton = document.createElement('div')
+
+    # Create text to buttons/elements and append them to right element
+    multiSymbol = document.createTextNode('X')
+    tdMultiSymbol.appendChild(multiSymbol)
+
+    # Add classname to elements alá BEM-syntax
+    table.className = 'show-work-out-container__table '
+    tdName.className = 'show-work-out-container__table-add__name'
+    tdQuantity.className = 'show-work-out-container__table-add__quanity'
+    tdworkOutMultiplication.className = 'show-work-out-container__table-add__workout-multiplication'
+    tdMultiSymbol.className =  'show-work-out-container__table-add__td-muliply-symbol'
+    editButton.className = 'show-work-out-container__table-add__edit-button'
+
+    # Decide quantity of colspan to every td in the table
+    tdName.colSpan = 20
+    tdQuantity.colSpan = 8
+    tdMultiSymbol.colSpan = 4
+    tdworkOutMultiplication.colSpan = 4
+
+    # Append every element to it's parent
+    tdName.appendChild(nameInput)
+    tdQuantity.appendChild(quantityInput)
+    tdworkOutMultiplication.appendChild(workOutMultiplicationInput)
+
+    trName.appendChild(tdName)
+    trQuantity.appendChild(tdQuantity)
+    trQuantity.appendChild(tdMultiSymbol)
+    trQuantity.appendChild(tdworkOutMultiplication)
+
+    table.appendChild(trName)
+    table.appendChild(trQuantity)
+    backgroundElement.appendChild(editButton)
+    backgroundElement.appendChild(table)
+
+    # Put value inside the right div
+    nameInput.innerHTML = nameInputValue
+    quantityInput.innerHTML = quantityInputValue
+    workOutMultiplicationInput.innerHTML = repQuantityValue
+
 
   deleteIt: (e) ->
     #This delete the whole container with input fields and buttons
-    e.target.parentNode.parentNode.parentNode.remove()
+    e.target.parentNode.parentNode.parentNode.parentNode.remove()
+
 
   stopWatch: () ->
     self = this

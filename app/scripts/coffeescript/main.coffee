@@ -1,10 +1,10 @@
 dateNames = ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec']
 
 logerApp = {
-
   connectionToFirebase: new Firebase("https://loger.firebaseio.com/")
   loginButton: document.querySelector('.register-login-container')
   addButton: document.querySelector('.add-container__button')
+  saveButton: document.querySelector('.save-contect__button')
 
   okButton: document.querySelector('.work-out-container__table-add__ok-button')
   workOutContainer: document.querySelector('.work-out-container')
@@ -33,24 +33,27 @@ logerApp = {
       self.stopWatch()
       self.addButton.addEventListener 'click', ->
         self.addEditWorkOut()
+        #self.reverseList()
 
+        allWorkOutOkButtons = document.querySelectorAll('.work-out-container__table-add__ok-button')
+        allWorkOutDeleteButtons = document.querySelectorAll('.work-out-container__table-add__delete-button')
 
-        if (document.querySelector('.work-out-container--background'))
-          self.reverseList()
+        for i in [0 ... allWorkOutOkButtons.length]
+          allWorkOutOkButtons[i].addEventListener 'click', (e)->
+            self.noEditMode(e)
+            self.bindInitialEvents();
 
-          allWorkOutOkButtons = document.querySelectorAll('.work-out-container__table-add__ok-button')
-          allWorkOutDeleteButtons = document.querySelectorAll('.work-out-container__table-add__delete-button')
+        for i in [0 ... allWorkOutDeleteButtons.length]
+          allWorkOutDeleteButtons[i].addEventListener 'click', (e)->
+            self.deleteIt(e)
 
-          for i in [0 ... allWorkOutOkButtons.length]
-            allWorkOutOkButtons[i].addEventListener 'click', (e)->
-              self.noEditMode(e)
+      if (document.querySelectorAll('.show-work-out-container__table').length > 0)
+        console.log 'TESTING: ', document.querySelectorAll('.show-work-out-container__table')
 
-          for i in [0 ... allWorkOutDeleteButtons.length]
-            allWorkOutDeleteButtons[i].addEventListener 'click', (e)->
-              self.deleteIt(e)
-
-          #document.querySelector('.work-out-container__table-add__delete-button').addEventListener 'click', (e)->
-          #  self.deleteIt(e)
+        allEditButtons = document.getElementsByClassName('show-work-out-container__table-add__edit-button')
+        allEditButtons[0].addEventListener 'click', (e)->
+          console.log "hejehj", e
+        #self.backToEditMode(e)
 
   dateOfToday: ->
     today = new Date()
@@ -68,12 +71,12 @@ logerApp = {
         console.log 'Login Failed!', error
       else
         #console.log 'authData.facebook', authData.facebook
-        self.saveToFirebase(authData)
+        self.saveUserToFirebase(authData)
         window.location.href = 'http://www.localhost:9000/logg-results.html';
 
-      return
+    return
 
-  saveToFirebase: (fbValue) ->
+  saveUserToFirebase: (fbValue) ->
 
     #get the information from redirectWithFBAndFB function
     fbInformation = fbValue
@@ -177,6 +180,10 @@ logerApp = {
     #This function is not done.
     allWorkOut = document.querySelectorAll('.work-out-container--background')
 
+  editMode: (e)->
+
+  #Visa edit mode again...
+
   noEditMode: (e) ->
     self = this
 
@@ -213,7 +220,7 @@ logerApp = {
     tdMultiSymbol.appendChild(multiSymbol)
 
     # Add classname to elements alá BEM-syntax
-    table.className = 'show-work-out-container__table '
+    table.className = 'show-work-out-container__table'
     tdName.className = 'show-work-out-container__table-add__name'
     tdQuantity.className = 'show-work-out-container__table-add__quanity'
     tdworkOutMultiplication.className = 'show-work-out-container__table-add__workout-multiplication'
@@ -238,13 +245,16 @@ logerApp = {
 
     table.appendChild(trName)
     table.appendChild(trQuantity)
-    backgroundElement.appendChild(editButton)
+    table.appendChild(editButton)
     backgroundElement.appendChild(table)
 
     # Put value inside the right div
     nameInput.innerHTML = nameInputValue
     quantityInput.innerHTML = quantityInputValue
     workOutMultiplicationInput.innerHTML = repQuantityValue
+
+  backToEditMode: (e) ->
+    console.log "Back To Edit Mode ON"
 
 
   deleteIt: (e) ->
@@ -296,6 +306,6 @@ logerApp = {
       clearTimeout(t)
       timer_is_on = 0
 
-}
+  }
 document.addEventListener 'DOMContentLoaded', ->
   logerApp.init()

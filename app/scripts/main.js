@@ -7,6 +7,7 @@
     connectionToFirebase: new Firebase("https://loger.firebaseio.com/"),
     loginButton: document.querySelector('.register-login-container'),
     addButton: document.querySelector('.add-container__button'),
+    saveButton: document.querySelector('.save-contect__button'),
     okButton: document.querySelector('.work-out-container__table-add__ok-button'),
     workOutContainer: document.querySelector('.work-out-container'),
     workOutTable: document.querySelectorAll('.work-out-container--background'),
@@ -20,7 +21,7 @@
       return this.bindInitialEvents();
     },
     bindInitialEvents: function() {
-      var self;
+      var allEditButtons, self;
       self = this;
       this.dateOfToday();
       if (window.location.href === 'http://localhost:9000/') {
@@ -30,27 +31,32 @@
       }
       if (window.location.href === 'http://www.localhost:9000/logg-results.html') {
         self.stopWatch();
-        return self.addButton.addEventListener('click', function() {
+        self.addButton.addEventListener('click', function() {
           var allWorkOutDeleteButtons, allWorkOutOkButtons, i, j, k, ref1, ref2, results;
           self.addEditWorkOut();
-          if (document.querySelector('.work-out-container--background')) {
-            self.reverseList();
-            allWorkOutOkButtons = document.querySelectorAll('.work-out-container__table-add__ok-button');
-            allWorkOutDeleteButtons = document.querySelectorAll('.work-out-container__table-add__delete-button');
-            for (i = j = 0, ref1 = allWorkOutOkButtons.length; 0 <= ref1 ? j < ref1 : j > ref1; i = 0 <= ref1 ? ++j : --j) {
-              allWorkOutOkButtons[i].addEventListener('click', function(e) {
-                return self.noEditMode(e);
-              });
-            }
-            results = [];
-            for (i = k = 0, ref2 = allWorkOutDeleteButtons.length; 0 <= ref2 ? k < ref2 : k > ref2; i = 0 <= ref2 ? ++k : --k) {
-              results.push(allWorkOutDeleteButtons[i].addEventListener('click', function(e) {
-                return self.deleteIt(e);
-              }));
-            }
-            return results;
+          allWorkOutOkButtons = document.querySelectorAll('.work-out-container__table-add__ok-button');
+          allWorkOutDeleteButtons = document.querySelectorAll('.work-out-container__table-add__delete-button');
+          for (i = j = 0, ref1 = allWorkOutOkButtons.length; 0 <= ref1 ? j < ref1 : j > ref1; i = 0 <= ref1 ? ++j : --j) {
+            allWorkOutOkButtons[i].addEventListener('click', function(e) {
+              self.noEditMode(e);
+              return self.bindInitialEvents();
+            });
           }
+          results = [];
+          for (i = k = 0, ref2 = allWorkOutDeleteButtons.length; 0 <= ref2 ? k < ref2 : k > ref2; i = 0 <= ref2 ? ++k : --k) {
+            results.push(allWorkOutDeleteButtons[i].addEventListener('click', function(e) {
+              return self.deleteIt(e);
+            }));
+          }
+          return results;
         });
+        if (document.querySelectorAll('.show-work-out-container__table').length > 0) {
+          console.log('TESTING: ', document.querySelectorAll('.show-work-out-container__table'));
+          allEditButtons = document.getElementsByClassName('show-work-out-container__table-add__edit-button');
+          return allEditButtons[0].addEventListener('click', function(e) {
+            return console.log("hejehj", e);
+          });
+        }
       }
     },
     dateOfToday: function() {
@@ -65,16 +71,16 @@
       var ref, self;
       self = this;
       ref = new Firebase('https://loger.firebaseio.com');
-      return ref.authWithOAuthPopup('facebook', function(error, authData) {
+      ref.authWithOAuthPopup('facebook', function(error, authData) {
         if (error) {
-          console.log('Login Failed!', error);
+          return console.log('Login Failed!', error);
         } else {
-          self.saveToFirebase(authData);
-          window.location.href = 'http://www.localhost:9000/logg-results.html';
+          self.saveUserToFirebase(authData);
+          return window.location.href = 'http://www.localhost:9000/logg-results.html';
         }
       });
     },
-    saveToFirebase: function(fbValue) {
+    saveUserToFirebase: function(fbValue) {
       var fbInformation, ref, usersRef;
       fbInformation = fbValue;
       ref = this.connectionToFirebase;
@@ -156,6 +162,7 @@
       var allWorkOut;
       return allWorkOut = document.querySelectorAll('.work-out-container--background');
     },
+    editMode: function(e) {},
     noEditMode: function(e) {
       var backgroundElement, editButton, multiSymbol, nameInput, nameInputValue, quantityInput, quantityInputValue, repQuantityValue, self, table, tableElement, tdMultiSymbol, tdName, tdQuantity, tdworkOutMultiplication, trButtons, trName, trQuantity, workOutMultiplicationInput;
       self = this;
@@ -179,7 +186,7 @@
       editButton = document.createElement('div');
       multiSymbol = document.createTextNode('X');
       tdMultiSymbol.appendChild(multiSymbol);
-      table.className = 'show-work-out-container__table ';
+      table.className = 'show-work-out-container__table';
       tdName.className = 'show-work-out-container__table-add__name';
       tdQuantity.className = 'show-work-out-container__table-add__quanity';
       tdworkOutMultiplication.className = 'show-work-out-container__table-add__workout-multiplication';
@@ -198,11 +205,14 @@
       trQuantity.appendChild(tdworkOutMultiplication);
       table.appendChild(trName);
       table.appendChild(trQuantity);
-      backgroundElement.appendChild(editButton);
+      table.appendChild(editButton);
       backgroundElement.appendChild(table);
       nameInput.innerHTML = nameInputValue;
       quantityInput.innerHTML = quantityInputValue;
       return workOutMultiplicationInput.innerHTML = repQuantityValue;
+    },
+    backToEditMode: function(e) {
+      return console.log("Back To Edit Mode ON");
     },
     deleteIt: function(e) {
       return e.target.parentNode.parentNode.parentNode.parentNode.remove();

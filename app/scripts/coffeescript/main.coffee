@@ -77,7 +77,6 @@ logerApp = {
     return
 
   saveUserToFirebase: (fbValue) ->
-
     #get the information from redirectWithFBAndFB function
     fbInformation = fbValue
     ref = this.connectionToFirebase

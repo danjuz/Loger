@@ -33,27 +33,22 @@ logerApp = {
       self.stopWatch()
       self.addButton.addEventListener 'click', ->
         self.addEditWorkOut()
-        #self.reverseList()
 
         allWorkOutOkButtons = document.querySelectorAll('.work-out-container__table-add__ok-button')
         allWorkOutDeleteButtons = document.querySelectorAll('.work-out-container__table-add__delete-button')
-
-        for i in [0 ... allWorkOutOkButtons.length]
-          allWorkOutOkButtons[i].addEventListener 'click', (e)->
-            self.noEditMode(e)
-            self.bindInitialEvents();
-
-        for i in [0 ... allWorkOutDeleteButtons.length]
-          allWorkOutDeleteButtons[i].addEventListener 'click', (e)->
-            self.deleteIt(e)
-
-      if (document.querySelectorAll('.show-work-out-container__table').length > 0)
-        console.log 'TESTING: ', document.querySelectorAll('.show-work-out-container__table')
-
         allEditButtons = document.getElementsByClassName('show-work-out-container__table-add__edit-button')
-        allEditButtons[0].addEventListener 'click', (e)->
-          console.log "hejehj", e
-        #self.backToEditMode(e)
+
+        for item in allWorkOutOkButtons
+          item.addEventListener 'click', (e)->
+            self.noEditMode(e)
+
+            for item in allEditButtons
+                item.addEventListener 'click', (e)->
+                    self.backToEditMode(e)
+
+        for item in allWorkOutDeleteButtons
+          item.addEventListener 'click', (e)->
+            self.deleteIt(e)
 
   dateOfToday: ->
     today = new Date()
@@ -70,7 +65,6 @@ logerApp = {
       if error
         console.log 'Login Failed!', error
       else
-        #console.log 'authData.facebook', authData.facebook
         self.saveUserToFirebase(authData)
         window.location.href = 'http://www.localhost:9000/logg-results.html';
 
@@ -127,7 +121,7 @@ logerApp = {
     okButton.appendChild(okButtonText)
     tdMultiSymbol.appendChild(multiSymbol)
 
-    # Add classname to elements alá BEM-syntax
+    # Add classname to elements
 
     background.className = 'work-out-container--background'
     table.className = 'work-out-container__table'
@@ -174,10 +168,6 @@ logerApp = {
 
     if (nameInput)
       nameInput.focus()
-
-  reverseList: ->
-    #This function is not done.
-    allWorkOut = document.querySelectorAll('.work-out-container--background')
 
   editMode: (e)->
 

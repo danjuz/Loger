@@ -21,7 +21,7 @@
       return this.bindInitialEvents();
     },
     bindInitialEvents: function() {
-      var allEditButtons, self;
+      var self;
       self = this;
       this.dateOfToday();
       if (window.location.href === 'http://localhost:9000/') {
@@ -31,32 +31,36 @@
       }
       if (window.location.href === 'http://www.localhost:9000/logg-results.html') {
         self.stopWatch();
-        self.addButton.addEventListener('click', function() {
-          var allWorkOutDeleteButtons, allWorkOutOkButtons, i, j, k, ref1, ref2, results;
+        return self.addButton.addEventListener('click', function() {
+          var allEditButtons, allWorkOutDeleteButtons, allWorkOutOkButtons, i, item, j, len, len1, results;
           self.addEditWorkOut();
           allWorkOutOkButtons = document.querySelectorAll('.work-out-container__table-add__ok-button');
           allWorkOutDeleteButtons = document.querySelectorAll('.work-out-container__table-add__delete-button');
-          for (i = j = 0, ref1 = allWorkOutOkButtons.length; 0 <= ref1 ? j < ref1 : j > ref1; i = 0 <= ref1 ? ++j : --j) {
-            allWorkOutOkButtons[i].addEventListener('click', function(e) {
+          allEditButtons = document.getElementsByClassName('show-work-out-container__table-add__edit-button');
+          for (i = 0, len = allWorkOutOkButtons.length; i < len; i++) {
+            item = allWorkOutOkButtons[i];
+            item.addEventListener('click', function(e) {
+              var j, len1, results;
               self.noEditMode(e);
-              return self.bindInitialEvents();
+              results = [];
+              for (j = 0, len1 = allEditButtons.length; j < len1; j++) {
+                item = allEditButtons[j];
+                results.push(item.addEventListener('click', function(e) {
+                  return self.backToEditMode(e);
+                }));
+              }
+              return results;
             });
           }
           results = [];
-          for (i = k = 0, ref2 = allWorkOutDeleteButtons.length; 0 <= ref2 ? k < ref2 : k > ref2; i = 0 <= ref2 ? ++k : --k) {
-            results.push(allWorkOutDeleteButtons[i].addEventListener('click', function(e) {
+          for (j = 0, len1 = allWorkOutDeleteButtons.length; j < len1; j++) {
+            item = allWorkOutDeleteButtons[j];
+            results.push(item.addEventListener('click', function(e) {
               return self.deleteIt(e);
             }));
           }
           return results;
         });
-        if (document.querySelectorAll('.show-work-out-container__table').length > 0) {
-          console.log('TESTING: ', document.querySelectorAll('.show-work-out-container__table'));
-          allEditButtons = document.getElementsByClassName('show-work-out-container__table-add__edit-button');
-          return allEditButtons[0].addEventListener('click', function(e) {
-            return console.log("hejehj", e);
-          });
-        }
       }
     },
     dateOfToday: function() {
@@ -157,10 +161,6 @@
       if (nameInput) {
         return nameInput.focus();
       }
-    },
-    reverseList: function() {
-      var allWorkOut;
-      return allWorkOut = document.querySelectorAll('.work-out-container--background');
     },
     editMode: function(e) {},
     noEditMode: function(e) {

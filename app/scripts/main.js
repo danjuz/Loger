@@ -4,7 +4,7 @@
   dateNames = ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec'];
 
   logerApp = {
-    connectionToFirebase: new Firebase("https://loger.firebaseio.com/"),
+    connectionToFirebase: new Firebase('https://loger.firebaseio.com/'),
     loginButton: document.querySelector('.register-login-container'),
     addButton: document.querySelector('.add-container__button'),
     saveButton: document.querySelector('.save-contect__button'),
@@ -162,7 +162,6 @@
         return nameInput.focus();
       }
     },
-    editMode: function(e) {},
     noEditMode: function(e) {
       var backgroundElement, editButton, multiSymbol, nameInput, nameInputValue, quantityInput, quantityInputValue, repQuantityValue, self, table, tableElement, tdMultiSymbol, tdName, tdQuantity, tdworkOutMultiplication, trButtons, trName, trQuantity, workOutMultiplicationInput;
       self = this;
@@ -171,7 +170,7 @@
       repQuantityValue = e.target.parentElement.parentElement.parentElement.childNodes[1].childNodes[2].childNodes[0].value;
       backgroundElement = e.target.parentElement.parentElement.parentElement.parentElement;
       tableElement = e.target.parentElement.parentElement.parentElement;
-      tableElement.className = tableElement.className + " hidden";
+      tableElement.className = tableElement.className + ' hidden';
       table = document.createElement('table');
       trName = document.createElement('tr');
       trQuantity = document.createElement('tr');
@@ -212,10 +211,20 @@
       return workOutMultiplicationInput.innerHTML = repQuantityValue;
     },
     backToEditMode: function(e) {
-      return console.log("Back To Edit Mode ON");
+      var showStats, tableElement;
+      tableElement = e.target.parentNode.parentNode.firstChild;
+      this.removeClass(tableElement, 'hidden');
+      showStats = e.target.parentNode.parentNode.childNodes[1];
+      return this.addClass(showStats, 'hidden');
     },
     deleteIt: function(e) {
       return e.target.parentNode.parentNode.parentNode.parentNode.remove();
+    },
+    addClass: function(element, className) {
+      return element.classList.add(className);
+    },
+    removeClass: function(element, className) {
+      return element.classList.remove(className);
     },
     stopWatch: function() {
       var minGost, minTime, sekGost, sekTime, self, t, timedCount, timer_is_on, zeroGost;

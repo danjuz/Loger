@@ -1,7 +1,7 @@
 dateNames = ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec']
 
 logerApp = {
-  connectionToFirebase: new Firebase("https://loger.firebaseio.com/")
+  connectionToFirebase: new Firebase('https://loger.firebaseio.com/')
   loginButton: document.querySelector('.register-login-container')
   addButton: document.querySelector('.add-container__button')
   saveButton: document.querySelector('.save-contect__button')
@@ -134,7 +134,6 @@ logerApp = {
     okButton.className = 'work-out-container__table-add__div-ok_button'
     deleteButton.className = 'work-out-container__table-add__div-delete-button'
 
-
     # Decide quantity of colspan to every td in the table
 
     tdName.colSpan = 20
@@ -169,10 +168,6 @@ logerApp = {
     if (nameInput)
       nameInput.focus()
 
-  editMode: (e)->
-
-  #Visa edit mode again...
-
   noEditMode: (e) ->
     self = this
 
@@ -184,7 +179,7 @@ logerApp = {
 
     #Hide table
     tableElement = e.target.parentElement.parentElement.parentElement
-    tableElement.className = tableElement.className + " hidden"
+    tableElement.className = tableElement.className + ' hidden'
 
     #Create new table with correct information
     table = document.createElement('table')
@@ -243,13 +238,21 @@ logerApp = {
     workOutMultiplicationInput.innerHTML = repQuantityValue
 
   backToEditMode: (e) ->
-    console.log "Back To Edit Mode ON"
+    tableElement = e.target.parentNode.parentNode.firstChild
+    this.removeClass(tableElement, 'hidden')
 
+    showStats = e.target.parentNode.parentNode.childNodes[1]
+    this.addClass(showStats, 'hidden')
 
   deleteIt: (e) ->
     #This delete the whole container with input fields and buttons
     e.target.parentNode.parentNode.parentNode.parentNode.remove()
 
+  addClass: (element, className) ->
+    element.classList.add(className)
+
+  removeClass: (element, className) ->
+    element.classList.remove(className);
 
   stopWatch: () ->
     self = this
@@ -295,6 +298,16 @@ logerApp = {
       clearTimeout(t)
       timer_is_on = 0
 
+
+
+
+
   }
+
+
+
+
+
+
 document.addEventListener 'DOMContentLoaded', ->
   logerApp.init()

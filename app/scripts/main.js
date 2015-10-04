@@ -17,7 +17,7 @@
     nameInput: document.querySelectorAll('.work-out-container__table-add__name-input'),
     quantitytInput: document.querySelectorAll('.work-out-container__table-add__quanity-input'),
     multiInput: document.querySelectorAll('.work-out-container__table-add__workout-multiplication-input'),
-    init: function() {
+    constructor: function() {
       return this.bindInitialEvents();
     },
     bindInitialEvents: function() {
@@ -40,8 +40,15 @@
           for (i = 0, len = allWorkOutOkButtons.length; i < len; i++) {
             item = allWorkOutOkButtons[i];
             item.addEventListener('click', function(e) {
-              var j, len1, results;
-              self.noEditMode(e);
+              var j, len1, results, showElement, tableElement;
+              if (e.target.parentNode.parentNode.parentNode.parentNode.childNodes[1] === void 0) {
+                self.noEditMode(e);
+              } else {
+                tableElement = e.target.parentElement.parentElement.parentElement;
+                showElement = e.target.parentNode.parentNode.parentNode.parentNode.childNodes[1];
+                self.addClass(tableElement, 'hidden');
+                self.removeClass(showElement, 'hidden');
+              }
               results = [];
               for (j = 0, len1 = allEditButtons.length; j < len1; j++) {
                 item = allEditButtons[j];
@@ -273,7 +280,7 @@
   };
 
   document.addEventListener('DOMContentLoaded', function() {
-    return logerApp.init();
+    return logerApp.constructor();
   });
 
 }).call(this);

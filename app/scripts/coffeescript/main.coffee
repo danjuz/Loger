@@ -18,7 +18,7 @@ logerApp = {
   multiInput: document.querySelectorAll('.work-out-container__table-add__workout-multiplication-input')
 
 
-  init: ->
+  constructor: ->
     this.bindInitialEvents()
 
   bindInitialEvents: ->
@@ -40,7 +40,14 @@ logerApp = {
 
         for item in allWorkOutOkButtons
           item.addEventListener 'click', (e)->
-            self.noEditMode(e)
+            if(e.target.parentNode.parentNode.parentNode.parentNode.childNodes[1] == undefined)
+                self.noEditMode(e)
+            else
+                tableElement = e.target.parentElement.parentElement.parentElement
+                showElement = e.target.parentNode.parentNode.parentNode.parentNode.childNodes[1]
+
+                self.addClass(tableElement, 'hidden')
+                self.removeClass(showElement, 'hidden')
 
             for item in allEditButtons
                 item.addEventListener 'click', (e)->
@@ -298,16 +305,8 @@ logerApp = {
       clearTimeout(t)
       timer_is_on = 0
 
-
-
-
-
   }
 
 
-
-
-
-
 document.addEventListener 'DOMContentLoaded', ->
-  logerApp.init()
+  logerApp.constructor()

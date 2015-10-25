@@ -5,9 +5,9 @@
 
   logerApp = {
     connectionToFirebase: new Firebase('https://loger.firebaseio.com/'),
-    loginButton: document.querySelector('.register-login-container'),
+    loginButton: document.querySelector('.register-login-container__button'),
     addButton: document.querySelector('.add-container__button'),
-    saveButton: document.querySelector('.save-contect__button'),
+    saveButton: document.querySelector('.save-content__button'),
     okButton: document.querySelector('.work-out-container__table-add__ok-button'),
     workOutContainer: document.querySelector('.work-out-container'),
     workOutTable: document.querySelectorAll('.work-out-container--background'),
@@ -17,11 +17,12 @@
     nameInput: document.querySelectorAll('.work-out-container__table-add__name-input'),
     quantitytInput: document.querySelectorAll('.work-out-container__table-add__quanity-input'),
     multiInput: document.querySelectorAll('.work-out-container__table-add__workout-multiplication-input'),
+    logoutButton: document.querySelector('.header__main-container-logout'),
     constructor: function() {
       return this.bindInitialEvents();
     },
     bindInitialEvents: function() {
-      var self;
+      var obj, regex, self;
       self = this;
       this.dateOfToday();
       if (window.location.href === 'http://localhost:9000/') {
@@ -29,39 +30,46 @@
           return self.redirectWithFBAndFB();
         });
       }
-      if (window.location.href === 'http://www.localhost:9000/logg-results.html') {
+      if (window.location.href === 'http://localhost:9000/logg-results.html' || window.location.href === 'http://www.localhost:9000/logg-results.html') {
+        regex = /facebook:[0-9]+$/gm;
+        obj = window.localStorage['firebase:session::loger'] ? JSON.parse(window.localStorage['firebase:session::loger']).uid : [];
+        if (typeof obj === "object" || !obj.match(regex)) {
+          window.location.href = 'http://localhost:9000/';
+        }
         self.stopWatch();
-        return self.addButton.addEventListener('click', function() {
-          var allEditButtons, allWorkOutDeleteButtons, allWorkOutOkButtons, i, item, j, len, len1, results;
-          self.addEditWorkOut();
+        self.saveButton.addEventListener('click', function() {
+          return self.saveContentToFireBase();
+        });
+        self.addButton.addEventListener('click', function() {
+          return self.addEditWorkOut();
+        });
+        return self.logoutButton.addEventListener('click', function() {
+          var allEditButtons, allWorkOutDeleteButtons, allWorkOutOkButtons, i, item, j, k, len, len1, len2, results;
+          localStorage.clear();
+          window.location.href = 'http://localhost:9000/';
           allWorkOutOkButtons = document.querySelectorAll('.work-out-container__table-add__ok-button');
           allWorkOutDeleteButtons = document.querySelectorAll('.work-out-container__table-add__delete-button');
           allEditButtons = document.getElementsByClassName('show-work-out-container__table-add__edit-button');
+          ({
+            showName: document.querySelectorAll('show-work-out-container__table-add__nameInput'),
+            quantityName: document.querySelectorAll('show-work-out-container__table-add__quantityInput'),
+            multiplyName: document.querySelectorAll('show-work-out-container__table-add__multiplyInput')
+          });
           for (i = 0, len = allWorkOutOkButtons.length; i < len; i++) {
             item = allWorkOutOkButtons[i];
             item.addEventListener('click', function(e) {
-              var j, len1, results, showElement, tableElement;
-              if (e.target.parentNode.parentNode.parentNode.parentNode.childNodes[1] === void 0) {
-                self.noEditMode(e);
-              } else {
-                tableElement = e.target.parentElement.parentElement.parentElement;
-                showElement = e.target.parentNode.parentNode.parentNode.parentNode.childNodes[1];
-                self.addClass(tableElement, 'hidden');
-                self.removeClass(showElement, 'hidden');
-              }
-              results = [];
-              for (j = 0, len1 = allEditButtons.length; j < len1; j++) {
-                item = allEditButtons[j];
-                results.push(item.addEventListener('click', function(e) {
-                  return self.backToEditMode(e);
-                }));
-              }
-              return results;
+              return self.getContentInput(e);
             });
+            for (j = 0, len1 = allEditButtons.length; j < len1; j++) {
+              item = allEditButtons[j];
+              item.addEventListener('click', function(e) {
+                return self.backToEditMode(e);
+              });
+            }
           }
           results = [];
-          for (j = 0, len1 = allWorkOutDeleteButtons.length; j < len1; j++) {
-            item = allWorkOutDeleteButtons[j];
+          for (k = 0, len2 = allWorkOutDeleteButtons.length; k < len2; k++) {
+            item = allWorkOutDeleteButtons[k];
             results.push(item.addEventListener('click', function(e) {
               return self.deleteIt(e);
             }));
@@ -84,27 +92,24 @@
       ref = new Firebase('https://loger.firebaseio.com');
       ref.authWithOAuthPopup('facebook', function(error, authData) {
         if (error) {
-          return console.log('Login Failed!', error);
+          return console.log('FacebookErrorMsg: ', error);
         } else {
-          self.saveUserToFirebase(authData);
-          return window.location.href = 'http://www.localhost:9000/logg-results.html';
+          return window.location.href = 'http://localhost:9000/logg-results.html';
         }
       });
     },
-    saveUserToFirebase: function(fbValue) {
-      var fbInformation, ref, usersRef;
-      fbInformation = fbValue;
+    saveUserToFirebase: function(userData) {
+      var fbInformation, id, ref, usersRef;
+      fbInformation = userData;
+      id = fbInformation.facebook.id;
       ref = this.connectionToFirebase;
-      usersRef = ref.child('users');
-      return usersRef.push({
-        information: {
-          id: fbInformation.facebook.id,
-          displayName: fbInformation.facebook.displayName,
-          first_name: fbInformation.facebook.cachedUserProfile.first_name,
-          last_name: fbInformation.facebook.cachedUserProfile.last_name,
-          profileImageURL: fbInformation.facebook.profileImageURL,
-          gender: fbInformation.facebook.cachedUserProfile.gender
-        }
+      usersRef = ref.child("users");
+      return usersRef.child(fbInformation.facebook.id).set({
+        displayName: fbInformation.facebook.displayName,
+        first_name: fbInformation.facebook.cachedUserProfile.first_name,
+        last_name: fbInformation.facebook.cachedUserProfile.last_name,
+        profileImageURL: fbInformation.facebook.profileImageURL,
+        gender: fbInformation.facebook.cachedUserProfile.gender
       });
     },
     addEditWorkOut: function() {
@@ -169,13 +174,32 @@
         return nameInput.focus();
       }
     },
-    noEditMode: function(e) {
-      var backgroundElement, editButton, multiSymbol, nameInput, nameInputValue, quantityInput, quantityInputValue, repQuantityValue, self, table, tableElement, tdMultiSymbol, tdName, tdQuantity, tdworkOutMultiplication, trButtons, trName, trQuantity, workOutMultiplicationInput;
-      self = this;
+    getContentInput: function(e) {
+      var backgroundElement, multiplyPlaceholder, nameInputValue, namePlaceholder, quantityInputValue, quantityPlaceholder, repQuantityValue, showElement, tableElement;
       nameInputValue = e.target.parentElement.parentElement.parentElement.childNodes[0].childNodes[0].childNodes[0].value;
       quantityInputValue = e.target.parentElement.parentElement.parentElement.childNodes[1].childNodes[0].childNodes[0].value;
       repQuantityValue = e.target.parentElement.parentElement.parentElement.childNodes[1].childNodes[2].childNodes[0].value;
       backgroundElement = e.target.parentElement.parentElement.parentElement.parentElement;
+      namePlaceholder = e.target.parentElement.parentElement.parentElement.parentElement.childNodes[1];
+      quantityPlaceholder = e.target.parentElement.parentElement.parentElement.parentElement.childNodes[1];
+      multiplyPlaceholder = e.target.parentElement.parentElement.parentElement;
+      console.log('Test ', namePlaceholder);
+      console.log('Test1 ', quantityPlaceholder);
+      console.log('Test2 ', multiplyPlaceholder);
+      if (e.target.parentNode.parentNode.parentNode.parentNode.childNodes[1]) {
+        console.log('Nu finns det element, uppdateringsmode');
+        console.log('innehåll: ', nameInputValue);
+        tableElement = e.target.parentElement.parentElement.parentElement;
+        showElement = e.target.parentNode.parentNode.parentNode.parentNode.childNodes[1];
+        this.addClass(tableElement, 'hidden');
+        return this.removeClass(showElement, 'hidden');
+      } else {
+        return this.noEditMode(e, nameInputValue, quantityInputValue, repQuantityValue, backgroundElement);
+      }
+    },
+    noEditMode: function(e, nameInputValue, quantityInputValue, repQuantityValue, backgroundElement) {
+      var editButton, multiSymbol, nameInput, quantityInput, self, table, tableElement, tdMultiSymbol, tdName, tdQuantity, tdworkOutMultiplication, trButtons, trName, trQuantity, workOutMultiplicationInput;
+      self = this;
       tableElement = e.target.parentElement.parentElement.parentElement;
       tableElement.className = tableElement.className + ' hidden';
       table = document.createElement('table');
@@ -198,6 +222,9 @@
       tdworkOutMultiplication.className = 'show-work-out-container__table-add__workout-multiplication';
       tdMultiSymbol.className = 'show-work-out-container__table-add__td-muliply-symbol';
       editButton.className = 'show-work-out-container__table-add__edit-button';
+      nameInput.className = 'show-work-out-container__table-add__nameInput';
+      quantityInput.className = 'show-work-out-container__table-add__quantityInput';
+      workOutMultiplicationInput.className = 'show-work-out-container__table-add__multiplyInput';
       tdName.colSpan = 20;
       tdQuantity.colSpan = 8;
       tdMultiSymbol.colSpan = 4;
@@ -213,6 +240,7 @@
       table.appendChild(trQuantity);
       table.appendChild(editButton);
       backgroundElement.appendChild(table);
+      console.log('name: ', nameInputValue);
       nameInput.innerHTML = nameInputValue;
       quantityInput.innerHTML = quantityInputValue;
       return workOutMultiplicationInput.innerHTML = repQuantityValue;
@@ -276,6 +304,14 @@
         clearTimeout(t);
         return timer_is_on = 0;
       });
+    },
+    saveContentToFireBase: function() {
+      if ($('.show-work-out-container__table-add__nameInput').length) {
+        console.log('Alla namn', $('.show-work-out-container__table-add__nameInput'));
+        console.log('Alla quantityInput', $('.show-work-out-container__table-add__quantityInput'));
+        console.log('Alla multuplyInput', $('.show-work-out-container__table-add__multiplyInput'));
+        return console.log('tid', $('.add-container__form-container__form__timer-input')[0].value);
+      }
     }
   };
 

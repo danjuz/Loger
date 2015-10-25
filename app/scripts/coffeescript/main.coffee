@@ -2,9 +2,9 @@ dateNames = ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt
 
 logerApp = {
   connectionToFirebase: new Firebase('https://loger.firebaseio.com/')
-  loginButton: document.querySelector('.register-login-container')
+  loginButton: document.querySelector('.register-login-container__button')
   addButton: document.querySelector('.add-container__button')
-  saveButton: document.querySelector('.save-contect__button')
+  saveButton: document.querySelector('.save-content__button')
 
   okButton: document.querySelector('.work-out-container__table-add__ok-button')
   workOutContainer: document.querySelector('.work-out-container')
@@ -17,6 +17,7 @@ logerApp = {
   quantitytInput: document.querySelectorAll('.work-out-container__table-add__quanity-input')
   multiInput: document.querySelectorAll('.work-out-container__table-add__workout-multiplication-input')
 
+  logoutButton: document.querySelector('.header__main-container-logout')
 
   constructor: ->
     this.bindInitialEvents()
@@ -29,29 +30,40 @@ logerApp = {
       self.loginButton.addEventListener 'click', ->
         self.redirectWithFBAndFB()
 
-    if (window.location.href == 'http://www.localhost:9000/logg-results.html')
+    if (window.location.href == 'http://localhost:9000/logg-results.html' || window.location.href == 'http://www.localhost:9000/logg-results.html')
+    #test if visitor has id from facebook login, if not, redirect to login page
+      regex = /facebook:[0-9]+$/gm
+      obj = if window.localStorage['firebase:session::loger'] then JSON.parse(window.localStorage['firebase:session::loger']).uid else []
+
+      if typeof obj == "object" || !obj.match regex
+        window.location.href = 'http://localhost:9000/'
+
       self.stopWatch()
+      self.saveButton.addEventListener 'click', ->
+          self.saveContentToFireBase()
+
       self.addButton.addEventListener 'click', ->
         self.addEditWorkOut()
+
+      self.logoutButton.addEventListener 'click', ->
+        localStorage.clear()
+        window.location.href = 'http://localhost:9000/'
 
         allWorkOutOkButtons = document.querySelectorAll('.work-out-container__table-add__ok-button')
         allWorkOutDeleteButtons = document.querySelectorAll('.work-out-container__table-add__delete-button')
         allEditButtons = document.getElementsByClassName('show-work-out-container__table-add__edit-button')
 
+        showName: document.querySelectorAll('show-work-out-container__table-add__nameInput')
+        quantityName: document.querySelectorAll('show-work-out-container__table-add__quantityInput')
+        multiplyName:  document.querySelectorAll('show-work-out-container__table-add__multiplyInput')
+
         for item in allWorkOutOkButtons
           item.addEventListener 'click', (e)->
-            if(e.target.parentNode.parentNode.parentNode.parentNode.childNodes[1] == undefined)
-                self.noEditMode(e)
-            else
-                tableElement = e.target.parentElement.parentElement.parentElement
-                showElement = e.target.parentNode.parentNode.parentNode.parentNode.childNodes[1]
+            self.getContentInput(e)
 
-                self.addClass(tableElement, 'hidden')
-                self.removeClass(showElement, 'hidden')
-
-            for item in allEditButtons
-                item.addEventListener 'click', (e)->
-                    self.backToEditMode(e)
+          for item in allEditButtons
+            item.addEventListener 'click', (e)->
+              self.backToEditMode(e)
 
         for item in allWorkOutDeleteButtons
           item.addEventListener 'click', (e)->
@@ -70,27 +82,26 @@ logerApp = {
     ref = new Firebase('https://loger.firebaseio.com')
     ref.authWithOAuthPopup 'facebook', (error, authData) ->
       if error
-        console.log 'Login Failed!', error
+        console.log 'FacebookErrorMsg: ', error
       else
-        self.saveUserToFirebase(authData)
-        window.location.href = 'http://www.localhost:9000/logg-results.html';
+        window.location.href = 'http://localhost:9000/logg-results.html'
 
     return
 
-  saveUserToFirebase: (fbValue) ->
+  saveUserToFirebase: (userData) ->
     #get the information from redirectWithFBAndFB function
-    fbInformation = fbValue
+    fbInformation = userData
+    id = fbInformation.facebook.id
     ref = this.connectionToFirebase
-    usersRef = ref.child('users')
+    usersRef = ref.child("users")
 
-    usersRef.push
-      information:
-        id: fbInformation.facebook.id
-        displayName: fbInformation.facebook.displayName
-        first_name: fbInformation.facebook.cachedUserProfile.first_name
-        last_name:  fbInformation.facebook.cachedUserProfile.last_name
-        profileImageURL: fbInformation.facebook.profileImageURL
-        gender: fbInformation.facebook.cachedUserProfile.gender
+    usersRef.child(fbInformation.facebook.id).set({
+      displayName: fbInformation.facebook.displayName,
+      first_name: fbInformation.facebook.cachedUserProfile.first_name,
+      last_name:  fbInformation.facebook.cachedUserProfile.last_name,
+      profileImageURL: fbInformation.facebook.profileImageURL,
+      gender: fbInformation.facebook.cachedUserProfile.gender
+    });
 
   addEditWorkOut: ->
     this.bindEvents
@@ -175,14 +186,42 @@ logerApp = {
     if (nameInput)
       nameInput.focus()
 
-  noEditMode: (e) ->
-    self = this
+  getContentInput: (e)->
 
     #Get and put input value into variables
     nameInputValue = e.target.parentElement.parentElement.parentElement.childNodes[0].childNodes[0].childNodes[0].value
     quantityInputValue = e.target.parentElement.parentElement.parentElement.childNodes[1].childNodes[0].childNodes[0].value
     repQuantityValue = e.target.parentElement.parentElement.parentElement.childNodes[1].childNodes[2].childNodes[0].value
     backgroundElement = e.target.parentElement.parentElement.parentElement.parentElement
+
+    namePlaceholder = e.target.parentElement.parentElement.parentElement.parentElement.childNodes[1]
+    quantityPlaceholder = e.target.parentElement.parentElement.parentElement.parentElement.childNodes[1]
+    multiplyPlaceholder = e.target.parentElement.parentElement.parentElement
+
+    console.log 'Test ', namePlaceholder
+    console.log 'Test1 ', quantityPlaceholder
+    console.log 'Test2 ', multiplyPlaceholder
+
+    if(e.target.parentNode.parentNode.parentNode.parentNode.childNodes[1])
+      console.log 'Nu finns det element, uppdateringsmode'
+      console.log 'innehåll: ', nameInputValue
+
+    # Put value inside the right div
+      #namePlaceholder.innerHTML = nameInputValue
+      #this.quantityName.innerHTML = quantityInputValue
+      #this.multiplyName.innerHTML = repQuantityValue
+
+      tableElement = e.target.parentElement.parentElement.parentElement
+      showElement = e.target.parentNode.parentNode.parentNode.parentNode.childNodes[1]
+
+      this.addClass tableElement, 'hidden'
+      this.removeClass showElement, 'hidden'
+
+    else
+      this.noEditMode(e, nameInputValue, quantityInputValue, repQuantityValue, backgroundElement)
+
+  noEditMode: (e, nameInputValue, quantityInputValue, repQuantityValue, backgroundElement) ->
+    self = this
 
     #Hide table
     tableElement = e.target.parentElement.parentElement.parentElement
@@ -210,13 +249,18 @@ logerApp = {
     multiSymbol = document.createTextNode('X')
     tdMultiSymbol.appendChild(multiSymbol)
 
-    # Add classname to elements alá BEM-syntax
+    # Add classname to elements
     table.className = 'show-work-out-container__table'
     tdName.className = 'show-work-out-container__table-add__name'
     tdQuantity.className = 'show-work-out-container__table-add__quanity'
     tdworkOutMultiplication.className = 'show-work-out-container__table-add__workout-multiplication'
     tdMultiSymbol.className =  'show-work-out-container__table-add__td-muliply-symbol'
     editButton.className = 'show-work-out-container__table-add__edit-button'
+
+    nameInput.className =  'show-work-out-container__table-add__nameInput'
+    quantityInput.className = 'show-work-out-container__table-add__quantityInput'
+    workOutMultiplicationInput.className = 'show-work-out-container__table-add__multiplyInput'
+
 
     # Decide quantity of colspan to every td in the table
     tdName.colSpan = 20
@@ -240,6 +284,8 @@ logerApp = {
     backgroundElement.appendChild(table)
 
     # Put value inside the right div
+    console.log 'name: ', nameInputValue
+
     nameInput.innerHTML = nameInputValue
     quantityInput.innerHTML = quantityInputValue
     workOutMultiplicationInput.innerHTML = repQuantityValue
@@ -305,8 +351,13 @@ logerApp = {
       clearTimeout(t)
       timer_is_on = 0
 
+  saveContentToFireBase: ->
+      if $('.show-work-out-container__table-add__nameInput').length
+        console.log 'Alla namn', $('.show-work-out-container__table-add__nameInput')
+        console.log 'Alla quantityInput', $('.show-work-out-container__table-add__quantityInput')
+        console.log 'Alla multuplyInput', $('.show-work-out-container__table-add__multiplyInput')
+        console.log 'tid', $('.add-container__form-container__form__timer-input')[0].value
   }
 
-
 document.addEventListener 'DOMContentLoaded', ->
-  logerApp.constructor()
+    logerApp.constructor()

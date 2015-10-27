@@ -348,12 +348,24 @@ logerApp = {
             timer_is_on = 0
 
     saveContentToFireBase: ->
-        if $('.show-work-out-container__table-add__nameInput').length
-            console.log 'Alla namn', $('.show-work-out-container__table-add__nameInput')
-            console.log 'Alla quantityInput', $('.show-work-out-container__table-add__quantityInput')
-            console.log 'Alla multuplyInput', $('.show-work-out-container__table-add__multiplyInput')
-            console.log 'tid', $('.add-container__form-container__form__timer-input')[0].value
-  }
+        trainingName = $('.show-work-out-container__table-add__nameInput')
+        reps = $('.show-work-out-container__table-add__quantityInput')
+        howManyTimes = $('.show-work-out-container__table-add__multiplyInput')
+        time = $('.add-container__form-container__form__timer-input')[0].value
+        date =  $('.date-area__date')[0].innerHTML + ' ' + $('.date-area__month')[0].innerHTML
 
+        uid = JSON.parse(window.localStorage['firebase:session::loger']).uid
+        resultUid = uid.slice(9)
+        ref = new Firebase('https://loger.firebaseio.com')
+
+        postsRef = ref.child(resultUid)
+        postsRef.push().set
+            trainingName: "trainingName",
+            reps: reps,
+            howManyTimes: howManyTimes,
+            time: time,
+            date: date
+
+}
 document.addEventListener 'DOMContentLoaded', ->
     logerApp.constructor()

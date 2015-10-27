@@ -12,6 +12,7 @@
     workOutContainer: document.querySelector('.work-out-container'),
     workOutTable: document.querySelectorAll('.work-out-container--background'),
     playButton: document.querySelector('.add-container__form-container__form__play-button'),
+    timerContainer: document.querySelector('.add-container__form-container'),
     pauseButton: document.querySelector('.add-container__form__pause-button'),
     stopWatchInput: document.querySelector('.add-container__form-container__form__timer-input'),
     nameInput: document.querySelectorAll('.work-out-container__table-add__name-input'),
@@ -40,36 +41,39 @@
         self.saveButton.addEventListener('click', function() {
           return self.saveContentToFireBase();
         });
-        self.addButton.addEventListener('click', function() {
-          return self.addEditWorkOut();
-        });
-        return self.logoutButton.addEventListener('click', function() {
-          var allEditButtons, allWorkOutDeleteButtons, allWorkOutOkButtons, i, item, j, k, len, len1, len2, results;
+        self.logoutButton.addEventListener('click', function() {
           localStorage.clear();
-          window.location.href = 'http://localhost:9000/';
+          return window.location.href = 'http://localhost:9000/';
+        });
+        return self.addButton.addEventListener('click', function() {
+          var allEditButtons, allWorkOutDeleteButtons, allWorkOutOkButtons, i, item, j, len, len1, multiplyName, quantityName, results, showName;
+          self.addEditWorkOut();
+          self.removeClass(self.saveButton, 'hidden');
+          self.removeClass(self.timerContainer, 'hidden');
           allWorkOutOkButtons = document.querySelectorAll('.work-out-container__table-add__ok-button');
           allWorkOutDeleteButtons = document.querySelectorAll('.work-out-container__table-add__delete-button');
           allEditButtons = document.getElementsByClassName('show-work-out-container__table-add__edit-button');
-          ({
-            showName: document.querySelectorAll('show-work-out-container__table-add__nameInput'),
-            quantityName: document.querySelectorAll('show-work-out-container__table-add__quantityInput'),
-            multiplyName: document.querySelectorAll('show-work-out-container__table-add__multiplyInput')
-          });
+          showName = document.querySelectorAll('show-work-out-container__table-add__nameInput');
+          quantityName = document.querySelectorAll('show-work-out-container__table-add__quantityInput');
+          multiplyName = document.querySelectorAll('show-work-out-container__table-add__multiplyInput');
           for (i = 0, len = allWorkOutOkButtons.length; i < len; i++) {
             item = allWorkOutOkButtons[i];
             item.addEventListener('click', function(e) {
-              return self.getContentInput(e);
+              var j, len1, results;
+              self.getContentInput(e);
+              results = [];
+              for (j = 0, len1 = allEditButtons.length; j < len1; j++) {
+                item = allEditButtons[j];
+                results.push(item.addEventListener('click', function(e) {
+                  return self.backToEditMode(e);
+                }));
+              }
+              return results;
             });
-            for (j = 0, len1 = allEditButtons.length; j < len1; j++) {
-              item = allEditButtons[j];
-              item.addEventListener('click', function(e) {
-                return self.backToEditMode(e);
-              });
-            }
           }
           results = [];
-          for (k = 0, len2 = allWorkOutDeleteButtons.length; k < len2; k++) {
-            item = allWorkOutDeleteButtons[k];
+          for (j = 0, len1 = allWorkOutDeleteButtons.length; j < len1; j++) {
+            item = allWorkOutDeleteButtons[j];
             results.push(item.addEventListener('click', function(e) {
               return self.deleteIt(e);
             }));
@@ -183,12 +187,7 @@
       namePlaceholder = e.target.parentElement.parentElement.parentElement.parentElement.childNodes[1];
       quantityPlaceholder = e.target.parentElement.parentElement.parentElement.parentElement.childNodes[1];
       multiplyPlaceholder = e.target.parentElement.parentElement.parentElement;
-      console.log('Test ', namePlaceholder);
-      console.log('Test1 ', quantityPlaceholder);
-      console.log('Test2 ', multiplyPlaceholder);
       if (e.target.parentNode.parentNode.parentNode.parentNode.childNodes[1]) {
-        console.log('Nu finns det element, uppdateringsmode');
-        console.log('innehåll: ', nameInputValue);
         tableElement = e.target.parentElement.parentElement.parentElement;
         showElement = e.target.parentNode.parentNode.parentNode.parentNode.childNodes[1];
         this.addClass(tableElement, 'hidden');
@@ -240,7 +239,6 @@
       table.appendChild(trQuantity);
       table.appendChild(editButton);
       backgroundElement.appendChild(table);
-      console.log('name: ', nameInputValue);
       nameInput.innerHTML = nameInputValue;
       quantityInput.innerHTML = quantityInputValue;
       return workOutMultiplicationInput.innerHTML = repQuantityValue;
@@ -294,7 +292,7 @@
           timedCount();
         }), 1000);
       };
-      this.playButton.addEventListener('click', function(e) {
+      self.playButton.addEventListener('click', function(e) {
         if (!timer_is_on) {
           timer_is_on = 1;
           return timedCount();

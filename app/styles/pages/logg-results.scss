@@ -16,7 +16,7 @@
     margin-right: auto;
     width: 60px;
     height: 60px;
-    border-radius: 100%;
+    @include border-radius(100%);
 
     &:hover{
         background-color: #A6D9CC;
@@ -29,7 +29,7 @@
 }
 
 .work-out-container--background{
-    border-radius: 8px;
+    @include border-radius(4px);
     position: relative;
     background-color: #98DECD;
     padding: 1.5em 1em;
@@ -46,6 +46,7 @@
         padding: 0;
         text-align: center;
         font-size: 1.5em;
+        @include border-radius(4px);
     }
 
     td{
@@ -71,6 +72,7 @@
 }
 
 .work-out-container__table-add__delete-button{
+    @include border-radius(4px 0px 0px 4px);
     width: 50%;
     height: 50px;
     background-color: #EF6249;
@@ -81,6 +83,7 @@
 }
 
 .work-out-container__table-add__ok-button{
+    @include border-radius(0px 4px 4px 0px);
     width: 50%;
     height: 50px;
     background-color: #59A090;
@@ -99,14 +102,11 @@
         text-align: center;
         padding-bottom: 5px;
     }
-
-
 }
+
 .show-work-out-container__table-add__name{
     width: 100%;
     color: $white;
-
-
 }
 .show-work-out-container__table-add__quanity{
     width: 40%;
@@ -141,12 +141,12 @@
 }
 
 .save-content__button{
+    @include border-radius(50px 50px);
+    @include center-block;
     color: $white;
     font-size: 1.2em;
-    @include center-block;
     text-align: center;
     background-color: $darkGreen;
-    border-radius: 50px 50px;
     padding: 1.2em 1em;
     max-width: 200px;
     margin-top: 10px;

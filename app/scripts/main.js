@@ -6,6 +6,7 @@
 
   LogerApp = (function() {
     function LogerApp() {
+      this.retrievingData = bind(this.retrievingData, this);
       this.saveContentToFireBase = bind(this.saveContentToFireBase, this);
       this.stopWatch = bind(this.stopWatch, this);
       this.removeClass = bind(this.removeClass, this);
@@ -38,9 +39,9 @@
     }
 
     LogerApp.prototype.bindInitialEvents = function() {
-      var obj, regex, self;
-      self = this;
+      var obj, regex;
       this.dateOfToday();
+      this.retrievingData();
       if (window.location.href === 'http://localhost:9000/') {
         this.loginButton.addEventListener('click', (function(_this) {
           return function() {
@@ -366,6 +367,27 @@
         }));
       }
       return results;
+    };
+
+    LogerApp.prototype.retrievingData = function() {
+      var resultUid, uid;
+      uid = JSON.parse(window.localStorage['firebase:session::loger']).uid;
+      resultUid = uid.slice(9);
+      return this.connectionToFirebase.on('child_added', (function(snapshot, prevChildKey) {
+        var data, key, results, session;
+        data = snapshot.val();
+        session = data[resultUid].sessions;
+        results = [];
+        for (key in session) {
+          console.log('numer ', session[key].trainingName);
+          console.log('numer ', session[key].date);
+          console.log('numer ', session[key].howManyTimes);
+          results.push(console.log('numer ', session[key].reps));
+        }
+        return results;
+      }), function(errorObject) {
+        return console.log('The read failed: ' + errorObject.code);
+      });
     };
 
     return LogerApp;

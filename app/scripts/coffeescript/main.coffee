@@ -25,8 +25,9 @@ class LogerApp
         @bindInitialEvents()
 
     bindInitialEvents: =>
-        self = this
-        this.dateOfToday()
+        @dateOfToday()
+        @retrievingData()
+
 
         if (window.location.href == 'http://localhost:9000/')
             @loginButton.addEventListener 'click', =>
@@ -361,6 +362,23 @@ class LogerApp
             'howManyTimes': howManyTimes[item].textContent,
             #'time': time,
             'date': date
+
+    retrievingData: =>
+      uid = JSON.parse(window.localStorage['firebase:session::loger']).uid
+      resultUid = uid.slice(9)
+
+      @connectionToFirebase.on 'child_added', ((snapshot, prevChildKey) ->
+        data =  snapshot.val()
+        session = data[resultUid].sessions
+
+        for key of session
+          console.log 'numer ', session[key].trainingName
+          console.log 'numer ', session[key].date
+          console.log 'numer ', session[key].howManyTimes
+          console.log 'numer ', session[key].reps
+
+        ), (errorObject) ->
+          console.log 'The read failed: ' + errorObject.code
 
 document.addEventListener 'DOMContentLoaded', (event) =>
     logerApp = new LogerApp()

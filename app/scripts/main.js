@@ -1,35 +1,52 @@
 (function() {
-  var dateNames, logerApp;
+  var LogerApp, dateNames,
+    bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   dateNames = ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec'];
 
-  logerApp = {
-    connectionToFirebase: new Firebase('https://loger.firebaseio.com/'),
-    loginButton: document.querySelector('.register-login-container__button'),
-    addButton: document.querySelector('.add-container__button'),
-    saveButton: document.querySelector('.save-content__button'),
-    okButton: document.querySelector('.work-out-container__table-add__ok-button'),
-    workOutContainer: document.querySelector('.work-out-container'),
-    workOutTable: document.querySelectorAll('.work-out-container--background'),
-    playButton: document.querySelector('.add-container__form-container__form__play-button'),
-    timerContainer: document.querySelector('.add-container__form-container'),
-    pauseButton: document.querySelector('.add-container__form__pause-button'),
-    stopWatchInput: document.querySelector('.add-container__form-container__form__timer-input'),
-    nameInput: document.querySelectorAll('.work-out-container__table-add__name-input'),
-    quantitytInput: document.querySelectorAll('.work-out-container__table-add__quanity-input'),
-    multiInput: document.querySelectorAll('.work-out-container__table-add__workout-multiplication-input'),
-    logoutButton: document.querySelector('.header__main-container-logout'),
-    constructor: function() {
-      return this.bindInitialEvents();
-    },
-    bindInitialEvents: function() {
+  LogerApp = (function() {
+    function LogerApp() {
+      this.saveContentToFireBase = bind(this.saveContentToFireBase, this);
+      this.stopWatch = bind(this.stopWatch, this);
+      this.removeClass = bind(this.removeClass, this);
+      this.addClass = bind(this.addClass, this);
+      this.deleteIt = bind(this.deleteIt, this);
+      this.backToEditMode = bind(this.backToEditMode, this);
+      this.noEditMode = bind(this.noEditMode, this);
+      this.getContentInput = bind(this.getContentInput, this);
+      this.addEditWorkOut = bind(this.addEditWorkOut, this);
+      this.saveUserToFirebase = bind(this.saveUserToFirebase, this);
+      this.redirectWithFBAndFB = bind(this.redirectWithFBAndFB, this);
+      this.dateOfToday = bind(this.dateOfToday, this);
+      this.bindInitialEvents = bind(this.bindInitialEvents, this);
+      this.connectionToFirebase = new Firebase('https://loger.firebaseio.com/');
+      this.loginButton = document.querySelector('.register-login-container__button');
+      this.addButton = document.querySelector('.add-container__button');
+      this.saveButton = document.querySelector('.save-content__button');
+      this.okButton = document.querySelector('.work-out-container__table-add__ok-button');
+      this.workOutContainer = document.querySelector('.work-out-container');
+      this.workOutTable = document.querySelectorAll('.work-out-container--background');
+      this.playButton = document.querySelector('.add-container__form-container__form__play-button');
+      this.timerContainer = document.querySelector('.add-container__form-container');
+      this.pauseButton = document.querySelector('.add-container__form__pause-button');
+      this.stopWatchInput = document.querySelector('.add-container__form-container__form__timer-input');
+      this.nameInput = document.querySelectorAll('.work-out-container__table-add__name-input');
+      this.quantitytInput = document.querySelectorAll('.work-out-container__table-add__quanity-input');
+      this.multiInput = document.querySelectorAll('.work-out-container__table-add__workout-multiplication-input');
+      this.logoutButton = document.querySelector('.header__main-container-logout');
+      this.bindInitialEvents();
+    }
+
+    LogerApp.prototype.bindInitialEvents = function() {
       var obj, regex, self;
       self = this;
       this.dateOfToday();
       if (window.location.href === 'http://localhost:9000/') {
-        self.loginButton.addEventListener('click', function() {
-          return self.redirectWithFBAndFB();
-        });
+        this.loginButton.addEventListener('click', (function(_this) {
+          return function() {
+            return _this.redirectWithFBAndFB();
+          };
+        })(this));
       }
       if (window.location.href === 'http://localhost:9000/logg-results.html' || window.location.href === 'http://www.localhost:9000/logg-results.html') {
         regex = /facebook:[0-9]+$/gm;
@@ -37,89 +54,103 @@
         if (typeof obj === "object" || !obj.match(regex)) {
           window.location.href = 'http://localhost:9000/';
         }
-        self.stopWatch();
-        self.saveButton.addEventListener('click', function() {
-          return self.saveContentToFireBase();
-        });
-        self.logoutButton.addEventListener('click', function() {
-          localStorage.clear();
-          return window.location.href = 'http://localhost:9000/';
-        });
-        return self.addButton.addEventListener('click', function() {
-          var allEditButtons, allWorkOutDeleteButtons, allWorkOutOkButtons, i, item, j, len, len1, multiplyName, quantityName, results, showName;
-          self.addEditWorkOut();
-          self.removeClass(self.saveButton, 'hidden');
-          self.removeClass(self.timerContainer, 'hidden');
-          allWorkOutOkButtons = document.querySelectorAll('.work-out-container__table-add__ok-button');
-          allWorkOutDeleteButtons = document.querySelectorAll('.work-out-container__table-add__delete-button');
-          allEditButtons = document.getElementsByClassName('show-work-out-container__table-add__edit-button');
-          showName = document.querySelectorAll('show-work-out-container__table-add__nameInput');
-          quantityName = document.querySelectorAll('show-work-out-container__table-add__quantityInput');
-          multiplyName = document.querySelectorAll('show-work-out-container__table-add__multiplyInput');
-          for (i = 0, len = allWorkOutOkButtons.length; i < len; i++) {
-            item = allWorkOutOkButtons[i];
-            item.addEventListener('click', function(e) {
-              var j, len1, results;
-              self.getContentInput(e);
-              results = [];
-              for (j = 0, len1 = allEditButtons.length; j < len1; j++) {
-                item = allEditButtons[j];
-                results.push(item.addEventListener('click', function(e) {
-                  return self.backToEditMode(e);
-                }));
-              }
-              return results;
-            });
-          }
-          results = [];
-          for (j = 0, len1 = allWorkOutDeleteButtons.length; j < len1; j++) {
-            item = allWorkOutDeleteButtons[j];
-            results.push(item.addEventListener('click', function(e) {
-              return self.deleteIt(e);
-            }));
-          }
-          return results;
-        });
+        this.stopWatch();
+        this.saveButton.addEventListener('click', (function(_this) {
+          return function() {
+            return _this.saveContentToFireBase();
+          };
+        })(this));
+        this.logoutButton.addEventListener('click', (function(_this) {
+          return function() {
+            localStorage.clear();
+            return window.location.href = 'http://localhost:9000/';
+          };
+        })(this));
+        return this.addButton.addEventListener('click', (function(_this) {
+          return function() {
+            var allEditButtons, allWorkOutDeleteButtons, allWorkOutOkButtons, i, item, j, len, len1, multiplyName, quantityName, results, showName;
+            _this.addEditWorkOut();
+            _this.removeClass(_this.saveButton, 'hidden');
+            _this.removeClass(_this.timerContainer, 'hidden');
+            allWorkOutOkButtons = document.querySelectorAll('.work-out-container__table-add__ok-button');
+            allWorkOutDeleteButtons = document.querySelectorAll('.work-out-container__table-add__delete-button');
+            allEditButtons = document.getElementsByClassName('show-work-out-container__table-add__edit-button');
+            showName = document.querySelectorAll('show-work-out-container__table-add__nameInput');
+            quantityName = document.querySelectorAll('show-work-out-container__table-add__quantityInput');
+            multiplyName = document.querySelectorAll('show-work-out-container__table-add__multiplyInput');
+            for (i = 0, len = allWorkOutOkButtons.length; i < len; i++) {
+              item = allWorkOutOkButtons[i];
+              item.addEventListener('click', function(e) {
+                var j, len1, results;
+                _this.getContentInput(e);
+                results = [];
+                for (j = 0, len1 = allEditButtons.length; j < len1; j++) {
+                  item = allEditButtons[j];
+                  results.push(item.addEventListener('click', function(e) {
+                    return _this.backToEditMode(e);
+                  }));
+                }
+                return results;
+              });
+            }
+            results = [];
+            for (j = 0, len1 = allWorkOutDeleteButtons.length; j < len1; j++) {
+              item = allWorkOutDeleteButtons[j];
+              results.push(item.addEventListener('click', function(e) {
+                return _this.deleteIt(e);
+              }));
+            }
+            return results;
+          };
+        })(this));
       }
-    },
-    dateOfToday: function() {
+    };
+
+    LogerApp.prototype.dateOfToday = function() {
       var date, dateLocation, month, today;
       today = new Date();
       date = today.getDate();
       month = today.getMonth();
       dateLocation = document.querySelector('.header__date-area');
       return dateLocation.innerHTML = "<div class='date-area__date'>" + date + "</div><br/><div class='date-area__month'>" + dateNames[month] + "</div>";
-    },
-    redirectWithFBAndFB: function() {
-      var ref, self;
-      self = this;
+    };
+
+    LogerApp.prototype.redirectWithFBAndFB = function() {
+      var ref;
       ref = new Firebase('https://loger.firebaseio.com');
-      ref.authWithOAuthPopup('facebook', function(error, authData) {
-        if (error) {
-          return console.log('FacebookErrorMsg: ', error);
-        } else {
-          return window.location.href = 'http://localhost:9000/logg-results.html';
-        }
-      });
-    },
-    saveUserToFirebase: function(userData) {
-      var fbInformation, id, ref, usersRef;
+      return ref.authWithOAuthPopup('facebook', (function(_this) {
+        return function(error, authData) {
+          if (error) {
+            return console.log('FacebookErrorMsg: ', error);
+          } else {
+            _this.saveUserToFirebase(authData);
+            return window.location.href = 'http://localhost:9000/logg-results.html';
+          }
+        };
+      })(this));
+    };
+
+    LogerApp.prototype.saveUserToFirebase = function(userData) {
+      var fbInformation, id, usersRef;
       fbInformation = userData;
       id = fbInformation.facebook.id;
-      ref = this.connectionToFirebase;
-      usersRef = ref.child("users");
-      return usersRef.child(fbInformation.facebook.id).set({
-        displayName: fbInformation.facebook.displayName,
-        first_name: fbInformation.facebook.cachedUserProfile.first_name,
-        last_name: fbInformation.facebook.cachedUserProfile.last_name,
-        profileImageURL: fbInformation.facebook.profileImageURL,
-        gender: fbInformation.facebook.cachedUserProfile.gender
-      });
-    },
-    addEditWorkOut: function() {
-      var background, deleteButton, deleteButtonText, multiSymbol, nameInput, okButton, okButtonText, quantityInput, self, table, tdDeleteButton, tdMultiSymbol, tdName, tdOkButton, tdQuantity, tdworkOutMultiplication, trButtons, trName, trQuantity, workOutMultiplicationInput;
+      usersRef = this.connectionToFirebase.child("users");
+      if (this.connectionToFirebase.child("users").child(fbInformation.facebook.id)) {
+        return console.log("true");
+      } else {
+        return usersRef.child(fbInformation.facebook.id).set({
+          displayName: fbInformation.facebook.displayName,
+          first_name: fbInformation.facebook.cachedUserProfile.first_name,
+          last_name: fbInformation.facebook.cachedUserProfile.last_name,
+          profileImageURL: fbInformation.facebook.profileImageURL,
+          gender: fbInformation.facebook.cachedUserProfile.gender
+        });
+      }
+    };
+
+    LogerApp.prototype.addEditWorkOut = function() {
+      var background, deleteButton, deleteButtonText, multiSymbol, nameInput, okButton, okButtonText, quantityInput, table, tdDeleteButton, tdMultiSymbol, tdName, tdOkButton, tdQuantity, tdworkOutMultiplication, trButtons, trName, trQuantity, workOutMultiplicationInput;
       this.bindEvents;
-      self = this;
       background = document.createElement('div');
       table = document.createElement('table');
       trName = document.createElement('tr');
@@ -177,8 +208,9 @@
       if (nameInput) {
         return nameInput.focus();
       }
-    },
-    getContentInput: function(e) {
+    };
+
+    LogerApp.prototype.getContentInput = function(e) {
       var backgroundElement, multiplyPlaceholder, nameInputValue, namePlaceholder, quantityInputValue, quantityPlaceholder, repQuantityValue, showElement, tableElement;
       nameInputValue = e.target.parentElement.parentElement.parentElement.childNodes[0].childNodes[0].childNodes[0].value;
       quantityInputValue = e.target.parentElement.parentElement.parentElement.childNodes[1].childNodes[0].childNodes[0].value;
@@ -195,10 +227,10 @@
       } else {
         return this.noEditMode(e, nameInputValue, quantityInputValue, repQuantityValue, backgroundElement);
       }
-    },
-    noEditMode: function(e, nameInputValue, quantityInputValue, repQuantityValue, backgroundElement) {
-      var editButton, multiSymbol, nameInput, quantityInput, self, table, tableElement, tdMultiSymbol, tdName, tdQuantity, tdworkOutMultiplication, trButtons, trName, trQuantity, workOutMultiplicationInput;
-      self = this;
+    };
+
+    LogerApp.prototype.noEditMode = function(e, nameInputValue, quantityInputValue, repQuantityValue, backgroundElement) {
+      var editButton, multiSymbol, nameInput, quantityInput, table, tableElement, tdMultiSymbol, tdName, tdQuantity, tdworkOutMultiplication, trButtons, trName, trQuantity, workOutMultiplicationInput;
       tableElement = e.target.parentElement.parentElement.parentElement;
       tableElement.className = tableElement.className + ' hidden';
       table = document.createElement('table');
@@ -242,26 +274,30 @@
       nameInput.innerHTML = nameInputValue;
       quantityInput.innerHTML = quantityInputValue;
       return workOutMultiplicationInput.innerHTML = repQuantityValue;
-    },
-    backToEditMode: function(e) {
+    };
+
+    LogerApp.prototype.backToEditMode = function(e) {
       var showStats, tableElement;
       tableElement = e.target.parentNode.parentNode.firstChild;
       this.removeClass(tableElement, 'hidden');
       showStats = e.target.parentNode.parentNode.childNodes[1];
       return this.addClass(showStats, 'hidden');
-    },
-    deleteIt: function(e) {
+    };
+
+    LogerApp.prototype.deleteIt = function(e) {
       return e.target.parentNode.parentNode.parentNode.parentNode.remove();
-    },
-    addClass: function(element, className) {
+    };
+
+    LogerApp.prototype.addClass = function(element, className) {
       return element.classList.add(className);
-    },
-    removeClass: function(element, className) {
+    };
+
+    LogerApp.prototype.removeClass = function(element, className) {
       return element.classList.remove(className);
-    },
-    stopWatch: function() {
-      var minGost, minTime, sekGost, sekTime, self, t, timedCount, timer_is_on, zeroGost;
-      self = this;
+    };
+
+    LogerApp.prototype.stopWatch = function() {
+      var minGost, minTime, sekGost, sekTime, t, timedCount, timer_is_on, zeroGost;
       timer_is_on = 0;
       sekTime = 0;
       minTime = 0;
@@ -269,63 +305,78 @@
       sekGost = '';
       zeroGost = '';
       t = t;
-      timedCount = function() {
-        sekTime += 1;
-        if (sekTime >= 10) {
-          sekGost = '';
-        }
-        if (sekTime <= 10) {
-          sekGost = '0';
-        }
-        if (minTime >= 10) {
-          minGost = '';
-        }
-        if (minTime <= 10) {
-          minGost = '0';
-        }
-        if (sekTime >= 60) {
-          sekTime = 0;
-          minTime += 1;
-        }
-        self.stopWatchInput.value = zeroGost + minGost + minTime + ':' + zeroGost + sekGost + sekTime;
-        return t = setTimeout((function() {
-          timedCount();
-        }), 1000);
-      };
-      self.playButton.addEventListener('click', function(e) {
-        if (!timer_is_on) {
-          timer_is_on = 1;
-          return timedCount();
-        }
-      });
-      return this.pauseButton.addEventListener('click', function(e) {
-        clearTimeout(t);
-        return timer_is_on = 0;
-      });
-    },
-    saveContentToFireBase: function() {
-      var date, howManyTimes, postsRef, ref, reps, resultUid, time, trainingName, uid;
+      timedCount = (function(_this) {
+        return function() {
+          sekTime += 1;
+          if (sekTime >= 10) {
+            sekGost = '';
+          }
+          if (sekTime <= 10) {
+            sekGost = '0';
+          }
+          if (minTime >= 10) {
+            minGost = '';
+          }
+          if (minTime <= 10) {
+            minGost = '0';
+          }
+          if (sekTime >= 60) {
+            sekTime = 0;
+            minTime += 1;
+          }
+          _this.stopWatchInput.value = zeroGost + minGost + minTime + ':' + zeroGost + sekGost + sekTime;
+          return t = setTimeout((function() {
+            timedCount();
+          }), 1000);
+        };
+      })(this);
+      this.playButton.addEventListener('click', (function(_this) {
+        return function(e) {
+          if (!timer_is_on) {
+            timer_is_on = 1;
+            return timedCount();
+          }
+        };
+      })(this));
+      return this.pauseButton.addEventListener('click', (function(_this) {
+        return function(e) {
+          clearTimeout(t);
+          return timer_is_on = 0;
+        };
+      })(this));
+    };
+
+    LogerApp.prototype.saveContentToFireBase = function() {
+      var date, howManyTimes, i, item, postsRef, ref1, reps, resultUid, results, trainingName, uid, workoutcontainer;
       trainingName = $('.show-work-out-container__table-add__nameInput');
       reps = $('.show-work-out-container__table-add__quantityInput');
       howManyTimes = $('.show-work-out-container__table-add__multiplyInput');
-      time = $('.add-container__form-container__form__timer-input')[0].value;
+      workoutcontainer = document.querySelectorAll('.work-out-container--background');
       date = $('.date-area__date')[0].innerHTML + ' ' + $('.date-area__month')[0].innerHTML;
       uid = JSON.parse(window.localStorage['firebase:session::loger']).uid;
       resultUid = uid.slice(9);
-      ref = new Firebase('https://loger.firebaseio.com');
-      postsRef = ref.child(resultUid);
-      return postsRef.push().set({
-        trainingName: "trainingName",
-        reps: reps,
-        howManyTimes: howManyTimes,
-        time: time,
-        date: date
-      });
-    }
-  };
+      postsRef = this.connectionToFirebase.child("users").child(resultUid).child("sessions");
+      results = [];
+      for (item = i = 0, ref1 = workoutcontainer.length; i < ref1; item = i += 1) {
+        results.push(postsRef.push({
+          'trainingName': trainingName[item].textContent,
+          'reps': reps[item].textContent,
+          'howManyTimes': howManyTimes[item].textContent,
+          'date': date
+        }));
+      }
+      return results;
+    };
 
-  document.addEventListener('DOMContentLoaded', function() {
-    return logerApp.constructor();
-  });
+    return LogerApp;
+
+  })();
+
+  document.addEventListener('DOMContentLoaded', (function(_this) {
+    return function(event) {
+      var logerApp;
+      return logerApp = new LogerApp();
+    };
+  })(this));
 
 }).call(this);

@@ -1,35 +1,36 @@
 dateNames = ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec']
 
-logerApp = {
-    connectionToFirebase: new Firebase('https://loger.firebaseio.com/')
-    loginButton: document.querySelector('.register-login-container__button')
-    addButton: document.querySelector('.add-container__button')
-    saveButton: document.querySelector('.save-content__button')
-
-    okButton: document.querySelector('.work-out-container__table-add__ok-button')
-    workOutContainer: document.querySelector('.work-out-container')
-    workOutTable: document.querySelectorAll('.work-out-container--background')
-    playButton: document.querySelector('.add-container__form-container__form__play-button')
-    timerContainer: document.querySelector('.add-container__form-container')
-    pauseButton: document.querySelector('.add-container__form__pause-button')
-    stopWatchInput: document.querySelector('.add-container__form-container__form__timer-input')
-
-    nameInput: document.querySelectorAll('.work-out-container__table-add__name-input')
-    quantitytInput: document.querySelectorAll('.work-out-container__table-add__quanity-input')
-    multiInput: document.querySelectorAll('.work-out-container__table-add__workout-multiplication-input')
-
-    logoutButton: document.querySelector('.header__main-container-logout')
-
+class LogerApp
     constructor: ->
-        this.bindInitialEvents()
+        @connectionToFirebase = new Firebase('https://loger.firebaseio.com/')
 
-    bindInitialEvents: ->
+        @loginButton = document.querySelector('.register-login-container__button')
+        @addButton = document.querySelector('.add-container__button')
+        @saveButton = document.querySelector('.save-content__button')
+
+        @okButton = document.querySelector('.work-out-container__table-add__ok-button')
+        @workOutContainer = document.querySelector('.work-out-container')
+        @workOutTable = document.querySelectorAll('.work-out-container--background')
+        @playButton = document.querySelector('.add-container__form-container__form__play-button')
+        @timerContainer = document.querySelector('.add-container__form-container')
+        @pauseButton = document.querySelector('.add-container__form__pause-button')
+        @stopWatchInput = document.querySelector('.add-container__form-container__form__timer-input')
+
+        @nameInput = document.querySelectorAll('.work-out-container__table-add__name-input')
+        @quantitytInput = document.querySelectorAll('.work-out-container__table-add__quanity-input')
+        @multiInput = document.querySelectorAll('.work-out-container__table-add__workout-multiplication-input')
+
+        @logoutButton = document.querySelector('.header__main-container-logout')
+
+        @bindInitialEvents()
+
+    bindInitialEvents: =>
         self = this
         this.dateOfToday()
 
         if (window.location.href == 'http://localhost:9000/')
-            self.loginButton.addEventListener 'click', ->
-                self.redirectWithFBAndFB()
+            @loginButton.addEventListener 'click', =>
+                @redirectWithFBAndFB()
 
         if (window.location.href == 'http://localhost:9000/logg-results.html' || window.location.href == 'http://www.localhost:9000/logg-results.html')
 
@@ -41,18 +42,18 @@ logerApp = {
                 window.location.href = 'http://localhost:9000/'
         #End test
 
-            self.stopWatch()
-            self.saveButton.addEventListener 'click', ->
-                self.saveContentToFireBase()
+            @stopWatch()
+            @saveButton.addEventListener 'click', =>
+                @saveContentToFireBase()
 
-            self.logoutButton.addEventListener 'click', ->
+            @logoutButton.addEventListener 'click', =>
                 localStorage.clear()
                 window.location.href = 'http://localhost:9000/'
 
-            self.addButton.addEventListener 'click', ->
-                self.addEditWorkOut()
-                self.removeClass self.saveButton, 'hidden'
-                self.removeClass self.timerContainer, 'hidden'
+            @addButton.addEventListener 'click', =>
+                @addEditWorkOut()
+                @removeClass @saveButton, 'hidden'
+                @removeClass @timerContainer, 'hidden'
 
                 allWorkOutOkButtons = document.querySelectorAll('.work-out-container__table-add__ok-button')
                 allWorkOutDeleteButtons = document.querySelectorAll('.work-out-container__table-add__delete-button')
@@ -63,18 +64,18 @@ logerApp = {
 
 
                 for item in allWorkOutOkButtons
-                    item.addEventListener 'click', (e)->
-                        self.getContentInput(e)
+                    item.addEventListener 'click', (e)=>
+                        @getContentInput(e)
 
                         for item in allEditButtons
-                            item.addEventListener 'click', (e)->
-                                self.backToEditMode(e)
+                            item.addEventListener 'click', (e)=>
+                                @backToEditMode(e)
 
                 for item in allWorkOutDeleteButtons
-                    item.addEventListener 'click', (e)->
-                        self.deleteIt(e)
+                    item.addEventListener 'click', (e)=>
+                        @deleteIt(e)
 
-    dateOfToday: ->
+    dateOfToday: =>
         today = new Date()
         date = today.getDate()
         month = today.getMonth()
@@ -82,36 +83,33 @@ logerApp = {
         dateLocation = document.querySelector('.header__date-area')
         dateLocation.innerHTML = "<div class='date-area__date'>" + date + "</div><br/><div class='date-area__month'>" + dateNames[month] + "</div>"
 
-    redirectWithFBAndFB: ->
-        self = this
+    redirectWithFBAndFB: =>
         ref = new Firebase('https://loger.firebaseio.com')
-        ref.authWithOAuthPopup 'facebook', (error, authData) ->
+        ref.authWithOAuthPopup 'facebook', (error, authData) =>
           if error
             console.log 'FacebookErrorMsg: ', error
           else
+            @saveUserToFirebase(authData)
             window.location.href = 'http://localhost:9000/logg-results.html'
 
-        return
-
-    saveUserToFirebase: (userData) ->
+    saveUserToFirebase: (userData) =>
         #get the information from redirectWithFBAndFB function
         fbInformation = userData
         id = fbInformation.facebook.id
-        ref = this.connectionToFirebase
-        usersRef = ref.child("users")
+        usersRef = @connectionToFirebase.child("users")
 
-        usersRef.child(fbInformation.facebook.id).set({
-          displayName: fbInformation.facebook.displayName,
-          first_name: fbInformation.facebook.cachedUserProfile.first_name,
-          last_name:  fbInformation.facebook.cachedUserProfile.last_name,
-          profileImageURL: fbInformation.facebook.profileImageURL,
-          gender: fbInformation.facebook.cachedUserProfile.gender
-        });
+        if @connectionToFirebase.child("users").child(fbInformation.facebook.id)
+          console.log "true"
+        else
+          usersRef.child(fbInformation.facebook.id).set
+            displayName: fbInformation.facebook.displayName,
+            first_name: fbInformation.facebook.cachedUserProfile.first_name,
+            last_name:  fbInformation.facebook.cachedUserProfile.last_name,
+            profileImageURL: fbInformation.facebook.profileImageURL,
+            gender: fbInformation.facebook.cachedUserProfile.gender
 
-    addEditWorkOut: ->
-        this.bindEvents
-        self = this
-
+    addEditWorkOut: =>
+        @bindEvents
         # Create every needed elements to create the dynamic list of workout.
 
         background = document.createElement('div')
@@ -186,13 +184,12 @@ logerApp = {
         table.appendChild(trButtons)
 
         background.appendChild(table)
-        this.workOutContainer.appendChild(background)
+        @workOutContainer.appendChild(background)
 
         if (nameInput)
             nameInput.focus()
 
-    getContentInput: (e)->
-
+    getContentInput: (e) =>
         #Get and put input value into variables
         nameInputValue = e.target.parentElement.parentElement.parentElement.childNodes[0].childNodes[0].childNodes[0].value
         quantityInputValue = e.target.parentElement.parentElement.parentElement.childNodes[1].childNodes[0].childNodes[0].value
@@ -206,21 +203,19 @@ logerApp = {
         if(e.target.parentNode.parentNode.parentNode.parentNode.childNodes[1])
             # Put value inside the right div
             #namePlaceholder.innerHTML = nameInputValue
-            #this.quantityName.innerHTML = quantityInputValue
-            #this.multiplyName.innerHTML = repQuantityValue
+            #@quantityName.innerHTML = quantityInputValue
+            #@multiplyName.innerHTML = repQuantityValue
 
             tableElement = e.target.parentElement.parentElement.parentElement
             showElement = e.target.parentNode.parentNode.parentNode.parentNode.childNodes[1]
 
-            this.addClass tableElement, 'hidden'
-            this.removeClass showElement, 'hidden'
+            @addClass tableElement, 'hidden'
+            @removeClass showElement, 'hidden'
 
         else
-            this.noEditMode(e, nameInputValue, quantityInputValue, repQuantityValue, backgroundElement)
+            @noEditMode(e, nameInputValue, quantityInputValue, repQuantityValue, backgroundElement)
 
-    noEditMode: (e, nameInputValue, quantityInputValue, repQuantityValue, backgroundElement) ->
-        self = this
-
+    noEditMode: (e, nameInputValue, quantityInputValue, repQuantityValue, backgroundElement) =>
         #Hide table
         tableElement = e.target.parentElement.parentElement.parentElement
         tableElement.className = tableElement.className + ' hidden'
@@ -259,7 +254,6 @@ logerApp = {
         quantityInput.className = 'show-work-out-container__table-add__quantityInput'
         workOutMultiplicationInput.className = 'show-work-out-container__table-add__multiplyInput'
 
-
         # Decide quantity of colspan to every td in the table
         tdName.colSpan = 20
         tdQuantity.colSpan = 8
@@ -286,26 +280,24 @@ logerApp = {
         quantityInput.innerHTML = quantityInputValue
         workOutMultiplicationInput.innerHTML = repQuantityValue
 
-    backToEditMode: (e) ->
+    backToEditMode: (e) =>
         tableElement = e.target.parentNode.parentNode.firstChild
-        this.removeClass(tableElement, 'hidden')
+        @removeClass(tableElement, 'hidden')
 
         showStats = e.target.parentNode.parentNode.childNodes[1]
-        this.addClass(showStats, 'hidden')
+        @addClass(showStats, 'hidden')
 
-    deleteIt: (e) ->
+    deleteIt: (e) =>
         #This delete the whole container with input fields and buttons
         e.target.parentNode.parentNode.parentNode.parentNode.remove()
 
-    addClass: (element, className) ->
+    addClass: (element, className) =>
         element.classList.add(className)
 
-    removeClass: (element, className) ->
+    removeClass: (element, className) =>
         element.classList.remove(className);
 
-    stopWatch: () ->
-        self = this
-
+    stopWatch: () =>
         timer_is_on = 0
         sekTime = 0
         minTime = 0
@@ -314,7 +306,7 @@ logerApp = {
         zeroGost = ''
         t = t
 
-        timedCount = ->
+        timedCount = =>
             sekTime += 1
 
             if (sekTime >= 10)
@@ -330,42 +322,45 @@ logerApp = {
                 sekTime = 0
                 minTime += 1
 
-            self.stopWatchInput.value = zeroGost + minGost + minTime + ':' + zeroGost + sekGost + sekTime
+            @stopWatchInput.value = zeroGost + minGost + minTime + ':' + zeroGost + sekGost + sekTime
 
-            t = setTimeout((->
+            t = setTimeout((=>
                 timedCount()
                 return
                 ), 1000)
 
 
-        self.playButton.addEventListener 'click', (e)->
+        @playButton.addEventListener 'click', (e)=>
             if (!timer_is_on)
                 timer_is_on = 1
                 timedCount()
 
-        this.pauseButton.addEventListener 'click', (e)->
+        @pauseButton.addEventListener 'click', (e)=>
             clearTimeout(t)
             timer_is_on = 0
 
-    saveContentToFireBase: ->
+    saveContentToFireBase: =>
         trainingName = $('.show-work-out-container__table-add__nameInput')
         reps = $('.show-work-out-container__table-add__quantityInput')
         howManyTimes = $('.show-work-out-container__table-add__multiplyInput')
-        time = $('.add-container__form-container__form__timer-input')[0].value
+        workoutcontainer = document.querySelectorAll('.work-out-container--background')
         date =  $('.date-area__date')[0].innerHTML + ' ' + $('.date-area__month')[0].innerHTML
+        #time = $('.add-container__formtatus-container__form__timer-input')[0].textContent
+        #console.log 'time ', $('.add-container__formtatus-container__form__timer-input')
 
         uid = JSON.parse(window.localStorage['firebase:session::loger']).uid
         resultUid = uid.slice(9)
-        ref = new Firebase('https://loger.firebaseio.com')
 
-        postsRef = ref.child(resultUid)
-        postsRef.push().set
-            trainingName: "trainingName",
-            reps: reps,
-            howManyTimes: howManyTimes,
-            time: time,
-            date: date
+        postsRef = @connectionToFirebase.child("users").child(resultUid).child("sessions")
 
-}
-document.addEventListener 'DOMContentLoaded', ->
-    logerApp.constructor()
+
+        for item in [0...workoutcontainer.length] by 1
+          postsRef.push
+            'trainingName': trainingName[item].textContent,
+            'reps': reps[item].textContent,
+            'howManyTimes': howManyTimes[item].textContent,
+            #'time': time,
+            'date': date
+
+document.addEventListener 'DOMContentLoaded', (event) =>
+    logerApp = new LogerApp()

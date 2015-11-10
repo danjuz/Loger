@@ -18,6 +18,8 @@
       this.noEditMode = bind(this.noEditMode, this);
       this.getContentInput = bind(this.getContentInput, this);
       this.addEditWorkOut = bind(this.addEditWorkOut, this);
+      this.checkIfUserExists = bind(this.checkIfUserExists, this);
+      this.userExistsCallback = bind(this.userExistsCallback, this);
       this.saveUserToFirebase = bind(this.saveUserToFirebase, this);
       this.redirectWithFBAndFB = bind(this.redirectWithFBAndFB, this);
       this.dateOfToday = bind(this.dateOfToday, this);
@@ -121,25 +123,43 @@
           if (error) {
             return console.log('FacebookErrorMsg: ', error);
           } else {
-            _this.saveUserToFirebase(authData);
-            return window.location.href = 'http://localhost:9000/logg-results.html';
+            return _this.saveUserToFirebase(authData);
           }
         };
       })(this));
     };
 
     LogerApp.prototype.saveUserToFirebase = function(userData) {
+      return this.checkIfUserExists(userData.facebook.id, userData);
+    };
+
+    LogerApp.prototype.userExistsCallback = function(userId, exists, userData) {
       var fbInformation, id, usersRef;
-      fbInformation = userData;
-      id = fbInformation.facebook.id;
-      usersRef = this.connectionToFirebase.child("users");
-      return usersRef.child(fbInformation.facebook.id).set({
-        displayName: fbInformation.facebook.displayName,
-        first_name: fbInformation.facebook.cachedUserProfile.first_name,
-        last_name: fbInformation.facebook.cachedUserProfile.last_name,
-        profileImageURL: fbInformation.facebook.profileImageURL,
-        gender: fbInformation.facebook.cachedUserProfile.gender
-      });
+      if (exists) {
+        return window.location.href = 'http://localhost:9000/logg-results.html';
+      } else {
+        fbInformation = userData;
+        id = fbInformation.facebook.id;
+        usersRef = this.connectionToFirebase.child("users");
+        usersRef.child(fbInformation.facebook.id).set({
+          displayName: fbInformation.facebook.displayName,
+          first_name: fbInformation.facebook.cachedUserProfile.first_name,
+          last_name: fbInformation.facebook.cachedUserProfile.last_name,
+          profileImageURL: fbInformation.facebook.profileImageURL,
+          gender: fbInformation.facebook.cachedUserProfile.gender
+        });
+        return window.location.href = 'http://localhost:9000/logg-results.html';
+      }
+    };
+
+    LogerApp.prototype.checkIfUserExists = function(userId, userData) {
+      return this.connectionToFirebase.child("users").child(userId).once('value', (function(_this) {
+        return function(snapshot) {
+          var exists;
+          exists = snapshot.val() !== null;
+          return _this.userExistsCallback(userId, exists, userData);
+        };
+      })(this));
     };
 
     LogerApp.prototype.addEditWorkOut = function() {

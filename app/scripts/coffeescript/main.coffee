@@ -83,20 +83,31 @@ class LogerApp
               console.log 'FacebookErrorMsg: ', error
           else
             @saveUserToFirebase(authData)
-            window.location.href = 'http://localhost:9000/logg-results.html'
 
     saveUserToFirebase: (userData) =>
-        #get the information from redirectWithFBAndFB function
-        fbInformation = userData
-        id = fbInformation.facebook.id
-        usersRef = @connectionToFirebase.child("users")
+        @checkIfUserExists userData.facebook.id, userData
 
-        usersRef.child(fbInformation.facebook.id).set
-            displayName: fbInformation.facebook.displayName,
-            first_name: fbInformation.facebook.cachedUserProfile.first_name,
-            last_name:  fbInformation.facebook.cachedUserProfile.last_name,
-            profileImageURL: fbInformation.facebook.profileImageURL,
-            gender: fbInformation.facebook.cachedUserProfile.gender
+    userExistsCallback: (userId, exists, userData) =>
+        if exists
+            window.location.href = 'http://localhost:9000/logg-results.html'
+        else
+            fbInformation = userData
+            id = fbInformation.facebook.id
+            usersRef = @connectionToFirebase.child("users")
+
+            usersRef.child(fbInformation.facebook.id).set
+                displayName: fbInformation.facebook.displayName,
+                first_name: fbInformation.facebook.cachedUserProfile.first_name,
+                last_name:  fbInformation.facebook.cachedUserProfile.last_name,
+                profileImageURL: fbInformation.facebook.profileImageURL,
+                gender: fbInformation.facebook.cachedUserProfile.gender
+
+            window.location.href = 'http://localhost:9000/logg-results.html'
+
+    checkIfUserExists: (userId, userData) =>
+        @connectionToFirebase.child("users").child(userId).once 'value', (snapshot) =>
+            exists = snapshot.val() != null
+            @userExistsCallback userId, exists, userData
 
     addEditWorkOut: =>
         @bindEvents
@@ -319,7 +330,6 @@ class LogerApp
                 return
                 ), 1000)
 
-
         @playButton.addEventListener 'click', (e)=>
             if (!timer_is_on)
                 timer_is_on = 1
@@ -359,7 +369,6 @@ class LogerApp
             session = data[resultUid].sessions
 
             for key of session
-                #console.log 'all data ', session[key]
                 @appendingData session[key].trainingName, session[key].date, session[key].howManyTimes, session[key].reps,
 
             ), (errorObject) ->

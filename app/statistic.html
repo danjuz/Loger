@@ -1,16 +1,17 @@
 <!doctype html>
 <html lang="">
-  <head>
+<head>
     <meta charset="utf-8">
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Examensarbete</title>
 
+    <script src='https://cdn.firebase.com/js/client/2.2.9/firebase.js'></script>
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <link rel="stylesheet" href="styles/main.css">
 
-  </head>
-  <body>
+</head>
+<body>
     <script>
       window.fbAsyncInit = function() {
         FB.init({
@@ -24,36 +25,51 @@
          var js, fjs = d.getElementsByTagName(s)[0];
          if (d.getElementById(id)) {return;}
          js = d.createElement(s); js.id = id;
-         js.src = "//connect.facebook.net/en_US/sdk.js";
+         js.src = '//connect.facebook.net/en_US/sdk.js';
          fjs.parentNode.insertBefore(js, fjs);
        }(document, 'script', 'facebook-jssdk'));
+
     </script>
 
-    <div class="main-container">
-      <div class="header">
-        <div class="header__date-area">12 Aug</div>
-        <div class="header__main-container-logo"><a href="index.html">&#10561;</a></div>
-        <div class="header__main-container-back"><a href="logg-results.html"><img src="../images/return.png"></a></div>
-      </div>
-      <div class="statistic-container">
-      </div>
-    </div>
 
-    <div class="footer-area">
-      <div class="footer-area__img">⥁</div>
+    <div class="main-container-statistic">
+        <div class="header">
+            <div class="header__date-area">12 Aug</div>
+            <div class="header__main-container-logo"><a href="index.html">&#10561;</a></div>
+            <div class="header__main-container-back"><a href="logg-results.html"><img src="../images/return.png"></a></div>
+        </div>
+        <div class="wrapper-inner">
+            <div class="top-container">
+                <div class="training-number">
+                    <ul>
+                        <li class="title">Träningstillfällen</li>
+                        <li class="user-training-number"></li>
+                        <li class="p">st</li>        
+                    </ul>
+                </div>
+                <div class="record-number"></div>
+            </div>
+            <div class="middle-container">
+                <div class="reps"></div>
+            </div>
+            <div class="chart"></div>
+            <div class="footer-area">
+                <div class='header__main-container-logout'>Log out</div>
+            </div>
+        </div>
     </div>
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
     <script>
-      (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
-      function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
-      e=o.createElement(i);r=o.getElementsByTagName(i)[0];
-      e.src='https://www.google-analytics.com/analytics.js';
-      r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
-      ga('create','UA-XXXXX-X');ga('send','pageview');
-    </script>
+    (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
+        function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
+        e=o.createElement(i);r=o.getElementsByTagName(i)[0];
+        e.src='https://www.google-analytics.com/analytics.js';
+        r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+        ga('create','UA-XXXXX-X');ga('send','pageview');
+        </script>
 
-    <script src="/bower_components/jquery/dist/jquery.js"></script>
-    <script src="scripts/main.js"></script>
-  </body>
-</html>
+        <script src="/bower_components/jquery/dist/jquery.js"></script>
+        <script src="scripts/main.js"></script>
+    </body>
+    </html>

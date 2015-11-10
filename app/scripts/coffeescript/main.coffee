@@ -358,7 +358,6 @@ class LogerApp
             data =  snapshot.val()
             session = data[resultUid].sessions
 
-
             for key of session
                 #console.log 'all data ', session[key]
                 @appendingData session[key].trainingName, session[key].date, session[key].howManyTimes, session[key].reps,
@@ -368,7 +367,6 @@ class LogerApp
 
     appendingData: (trainingName, date, howManyTimes, reps) =>
         trainingNumber = document.querySelector('.user-training-number')
-
         trainingNumber.innerHTML = trainingName.length
 
     testForUid: =>
@@ -379,7 +377,6 @@ class LogerApp
         if typeof object == "object" || !object.match regex
             window.location.href = 'http://localhost:9000/'
             return
-        #End test
 
 document.addEventListener 'DOMContentLoaded', (event) =>
     logerApp = new LogerApp()

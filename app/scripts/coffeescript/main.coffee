@@ -26,23 +26,12 @@ class LogerApp
 
     bindInitialEvents: =>
         @dateOfToday()
-        @retrievingData()
-
-
-        if (window.location.href == 'http://localhost:9000/')
+        if (window.location.href == 'http://localhost:9000/' || window.location.href == 'http://www.localhost:9000/' )
             @loginButton.addEventListener 'click', =>
                 @redirectWithFBAndFB()
 
-        if (window.location.href == 'http://localhost:9000/logg-results.html' || window.location.href == 'http://www.localhost:9000/logg-results.html')
-
-        #test if visitor has id from facebook login, if not, redirect to login page. Vaildate with regex.
-            regex = /facebook:[0-9]+$/gm
-            obj = if window.localStorage['firebase:session::loger'] then JSON.parse(window.localStorage['firebase:session::loger']).uid else []
-
-            if typeof obj == "object" || !obj.match regex
-                window.location.href = 'http://localhost:9000/'
-        #End test
-
+        if (window.location.href == 'http://localhost:9000/logg-results.html' || window.location.href == 'http://localhost:9000/logg-results.html')
+            @testForUid()
             @stopWatch()
             @saveButton.addEventListener 'click', =>
                 @saveContentToFireBase()
@@ -63,18 +52,21 @@ class LogerApp
                 quantityName = document.querySelectorAll('show-work-out-container__table-add__quantityInput')
                 multiplyName = document.querySelectorAll('show-work-out-container__table-add__multiplyInput')
 
-
                 for item in allWorkOutOkButtons
                     item.addEventListener 'click', (e)=>
                         @getContentInput(e)
 
-                        for item in allEditButtons
-                            item.addEventListener 'click', (e)=>
-                                @backToEditMode(e)
+                  for item in allEditButtons
+                      item.addEventListener 'click', (e)=>
+                          @backToEditMode(e)
 
                 for item in allWorkOutDeleteButtons
-                    item.addEventListener 'click', (e)=>
-                        @deleteIt(e)
+                  item.addEventListener 'click', (e)=>
+                      @deleteIt(e)
+
+        if (window.location.href == 'http://localhost:9000/statistic.html' || window.location.href == 'http://www.localhost:9000/statistic.html')
+            @testForUid()
+            @retrievingData()
 
     dateOfToday: =>
         today = new Date()
@@ -88,7 +80,7 @@ class LogerApp
         ref = new Firebase('https://loger.firebaseio.com')
         ref.authWithOAuthPopup 'facebook', (error, authData) =>
           if error
-            console.log 'FacebookErrorMsg: ', error
+              console.log 'FacebookErrorMsg: ', error
           else
             @saveUserToFirebase(authData)
             window.location.href = 'http://localhost:9000/logg-results.html'
@@ -99,10 +91,7 @@ class LogerApp
         id = fbInformation.facebook.id
         usersRef = @connectionToFirebase.child("users")
 
-        if @connectionToFirebase.child("users").child(fbInformation.facebook.id)
-          console.log "true"
-        else
-          usersRef.child(fbInformation.facebook.id).set
+        usersRef.child(fbInformation.facebook.id).set
             displayName: fbInformation.facebook.displayName,
             first_name: fbInformation.facebook.cachedUserProfile.first_name,
             last_name:  fbInformation.facebook.cachedUserProfile.last_name,
@@ -111,7 +100,7 @@ class LogerApp
 
     addEditWorkOut: =>
         @bindEvents
-        # Create every needed elements to create the dynamic list of workout.
+        # Create every needed element to create the dynamic list of workout.
 
         background = document.createElement('div')
         table = document.createElement('table')
@@ -298,7 +287,7 @@ class LogerApp
     removeClass: (element, className) =>
         element.classList.remove(className);
 
-    stopWatch: () =>
+     stopWatch: () =>
         timer_is_on = 0
         sekTime = 0
         minTime = 0
@@ -341,44 +330,56 @@ class LogerApp
             timer_is_on = 0
 
     saveContentToFireBase: =>
-        trainingName = $('.show-work-out-container__table-add__nameInput')
-        reps = $('.show-work-out-container__table-add__quantityInput')
-        howManyTimes = $('.show-work-out-container__table-add__multiplyInput')
+        trainingName = document.querySelectorAll('.show-work-out-container__table-add__nameInput')
+        reps = document.querySelectorAll('.show-work-out-container__table-add__quantityInput')
+        howManyTimes = document.querySelectorAll('.show-work-out-container__table-add__multiplyInput')
         workoutcontainer = document.querySelectorAll('.work-out-container--background')
-        date =  $('.date-area__date')[0].innerHTML + ' ' + $('.date-area__month')[0].innerHTML
-        #time = $('.add-container__formtatus-container__form__timer-input')[0].textContent
-        #console.log 'time ', $('.add-container__formtatus-container__form__timer-input')
+        date =  document.querySelector('.date-area__date').innerHTML + ' ' + document.querySelector('.date-area__month').innerHTML
+        time = document.querySelector('.add-container__form-container__form__timer-input').value
 
         uid = JSON.parse(window.localStorage['firebase:session::loger']).uid
         resultUid = uid.slice(9)
 
         postsRef = @connectionToFirebase.child("users").child(resultUid).child("sessions")
 
-
         for item in [0...workoutcontainer.length] by 1
           postsRef.push
             'trainingName': trainingName[item].textContent,
             'reps': reps[item].textContent,
             'howManyTimes': howManyTimes[item].textContent,
-            #'time': time,
+            'time': time,
             'date': date
 
     retrievingData: =>
-      uid = JSON.parse(window.localStorage['firebase:session::loger']).uid
-      resultUid = uid.slice(9)
+        uid = JSON.parse(window.localStorage['firebase:session::loger']).uid
+        resultUid = uid.slice(9)
 
-      @connectionToFirebase.on 'child_added', ((snapshot, prevChildKey) ->
-        data =  snapshot.val()
-        session = data[resultUid].sessions
+        @connectionToFirebase.on 'child_added', ((snapshot, prevChildKey) =>
+            data =  snapshot.val()
+            session = data[resultUid].sessions
 
-        for key of session
-          console.log 'numer ', session[key].trainingName
-          console.log 'numer ', session[key].date
-          console.log 'numer ', session[key].howManyTimes
-          console.log 'numer ', session[key].reps
 
-        ), (errorObject) ->
-          console.log 'The read failed: ' + errorObject.code
+            for key of session
+                #console.log 'all data ', session[key]
+                @appendingData session[key].trainingName, session[key].date, session[key].howManyTimes, session[key].reps,
+
+            ), (errorObject) ->
+              console.log 'The read failed: ', errorObject.code
+
+    appendingData: (trainingName, date, howManyTimes, reps) =>
+        trainingNumber = document.querySelector('.user-training-number')
+
+        trainingNumber.innerHTML = trainingName.length
+
+    testForUid: =>
+        #test if visitor has id from facebook login, if not, redirect to login page. Vaildate with regex.
+        regex = /facebook:[0-9]+$/gm
+        object = if window.localStorage['firebase:session::loger'] then JSON.parse(window.localStorage['firebase:session::loger']).uid else []
+
+        if typeof object == "object" || !object.match regex
+            window.location.href = 'http://localhost:9000/'
+            return
+        #End test
 
 document.addEventListener 'DOMContentLoaded', (event) =>
     logerApp = new LogerApp()

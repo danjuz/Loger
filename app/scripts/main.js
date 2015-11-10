@@ -6,6 +6,8 @@
 
   LogerApp = (function() {
     function LogerApp() {
+      this.testForUid = bind(this.testForUid, this);
+      this.appendingData = bind(this.appendingData, this);
       this.retrievingData = bind(this.retrievingData, this);
       this.saveContentToFireBase = bind(this.saveContentToFireBase, this);
       this.stopWatch = bind(this.stopWatch, this);
@@ -39,22 +41,16 @@
     }
 
     LogerApp.prototype.bindInitialEvents = function() {
-      var obj, regex;
       this.dateOfToday();
-      this.retrievingData();
-      if (window.location.href === 'http://localhost:9000/') {
+      if (window.location.href === 'http://localhost:9000/' || window.location.href === 'http://www.localhost:9000/') {
         this.loginButton.addEventListener('click', (function(_this) {
           return function() {
             return _this.redirectWithFBAndFB();
           };
         })(this));
       }
-      if (window.location.href === 'http://localhost:9000/logg-results.html' || window.location.href === 'http://www.localhost:9000/logg-results.html') {
-        regex = /facebook:[0-9]+$/gm;
-        obj = window.localStorage['firebase:session::loger'] ? JSON.parse(window.localStorage['firebase:session::loger']).uid : [];
-        if (typeof obj === "object" || !obj.match(regex)) {
-          window.location.href = 'http://localhost:9000/';
-        }
+      if (window.location.href === 'http://localhost:9000/logg-results.html' || window.location.href === 'http://localhost:9000/logg-results.html') {
+        this.testForUid();
         this.stopWatch();
         this.saveButton.addEventListener('click', (function(_this) {
           return function() {
@@ -67,9 +63,9 @@
             return window.location.href = 'http://localhost:9000/';
           };
         })(this));
-        return this.addButton.addEventListener('click', (function(_this) {
+        this.addButton.addEventListener('click', (function(_this) {
           return function() {
-            var allEditButtons, allWorkOutDeleteButtons, allWorkOutOkButtons, i, item, j, len, len1, multiplyName, quantityName, results, showName;
+            var allEditButtons, allWorkOutDeleteButtons, allWorkOutOkButtons, i, item, j, k, len, len1, len2, multiplyName, quantityName, results, showName;
             _this.addEditWorkOut();
             _this.removeClass(_this.saveButton, 'hidden');
             _this.removeClass(_this.timerContainer, 'hidden');
@@ -82,21 +78,18 @@
             for (i = 0, len = allWorkOutOkButtons.length; i < len; i++) {
               item = allWorkOutOkButtons[i];
               item.addEventListener('click', function(e) {
-                var j, len1, results;
-                _this.getContentInput(e);
-                results = [];
-                for (j = 0, len1 = allEditButtons.length; j < len1; j++) {
-                  item = allEditButtons[j];
-                  results.push(item.addEventListener('click', function(e) {
-                    return _this.backToEditMode(e);
-                  }));
-                }
-                return results;
+                return _this.getContentInput(e);
+              });
+            }
+            for (j = 0, len1 = allEditButtons.length; j < len1; j++) {
+              item = allEditButtons[j];
+              item.addEventListener('click', function(e) {
+                return _this.backToEditMode(e);
               });
             }
             results = [];
-            for (j = 0, len1 = allWorkOutDeleteButtons.length; j < len1; j++) {
-              item = allWorkOutDeleteButtons[j];
+            for (k = 0, len2 = allWorkOutDeleteButtons.length; k < len2; k++) {
+              item = allWorkOutDeleteButtons[k];
               results.push(item.addEventListener('click', function(e) {
                 return _this.deleteIt(e);
               }));
@@ -104,6 +97,10 @@
             return results;
           };
         })(this));
+      }
+      if (window.location.href === 'http://localhost:9000/statistic.html' || window.location.href === 'http://www.localhost:9000/statistic.html') {
+        this.testForUid();
+        return this.retrievingData();
       }
     };
 
@@ -136,17 +133,13 @@
       fbInformation = userData;
       id = fbInformation.facebook.id;
       usersRef = this.connectionToFirebase.child("users");
-      if (this.connectionToFirebase.child("users").child(fbInformation.facebook.id)) {
-        return console.log("true");
-      } else {
-        return usersRef.child(fbInformation.facebook.id).set({
-          displayName: fbInformation.facebook.displayName,
-          first_name: fbInformation.facebook.cachedUserProfile.first_name,
-          last_name: fbInformation.facebook.cachedUserProfile.last_name,
-          profileImageURL: fbInformation.facebook.profileImageURL,
-          gender: fbInformation.facebook.cachedUserProfile.gender
-        });
-      }
+      return usersRef.child(fbInformation.facebook.id).set({
+        displayName: fbInformation.facebook.displayName,
+        first_name: fbInformation.facebook.cachedUserProfile.first_name,
+        last_name: fbInformation.facebook.cachedUserProfile.last_name,
+        profileImageURL: fbInformation.facebook.profileImageURL,
+        gender: fbInformation.facebook.cachedUserProfile.gender
+      });
     };
 
     LogerApp.prototype.addEditWorkOut = function() {
@@ -348,12 +341,13 @@
     };
 
     LogerApp.prototype.saveContentToFireBase = function() {
-      var date, howManyTimes, i, item, postsRef, ref1, reps, resultUid, results, trainingName, uid, workoutcontainer;
-      trainingName = $('.show-work-out-container__table-add__nameInput');
-      reps = $('.show-work-out-container__table-add__quantityInput');
-      howManyTimes = $('.show-work-out-container__table-add__multiplyInput');
+      var date, howManyTimes, i, item, postsRef, ref1, reps, resultUid, results, time, trainingName, uid, workoutcontainer;
+      trainingName = document.querySelectorAll('.show-work-out-container__table-add__nameInput');
+      reps = document.querySelectorAll('.show-work-out-container__table-add__quantityInput');
+      howManyTimes = document.querySelectorAll('.show-work-out-container__table-add__multiplyInput');
       workoutcontainer = document.querySelectorAll('.work-out-container--background');
-      date = $('.date-area__date')[0].innerHTML + ' ' + $('.date-area__month')[0].innerHTML;
+      date = document.querySelector('.date-area__date').innerHTML + ' ' + document.querySelector('.date-area__month').innerHTML;
+      time = document.querySelector('.add-container__form-container__form__timer-input').value;
       uid = JSON.parse(window.localStorage['firebase:session::loger']).uid;
       resultUid = uid.slice(9);
       postsRef = this.connectionToFirebase.child("users").child(resultUid).child("sessions");
@@ -363,6 +357,7 @@
           'trainingName': trainingName[item].textContent,
           'reps': reps[item].textContent,
           'howManyTimes': howManyTimes[item].textContent,
+          'time': time,
           'date': date
         }));
       }
@@ -373,21 +368,35 @@
       var resultUid, uid;
       uid = JSON.parse(window.localStorage['firebase:session::loger']).uid;
       resultUid = uid.slice(9);
-      return this.connectionToFirebase.on('child_added', (function(snapshot, prevChildKey) {
-        var data, key, results, session;
-        data = snapshot.val();
-        session = data[resultUid].sessions;
-        results = [];
-        for (key in session) {
-          console.log('numer ', session[key].trainingName);
-          console.log('numer ', session[key].date);
-          console.log('numer ', session[key].howManyTimes);
-          results.push(console.log('numer ', session[key].reps));
-        }
-        return results;
-      }), function(errorObject) {
-        return console.log('The read failed: ' + errorObject.code);
+      return this.connectionToFirebase.on('child_added', ((function(_this) {
+        return function(snapshot, prevChildKey) {
+          var data, key, results, session;
+          data = snapshot.val();
+          session = data[resultUid].sessions;
+          results = [];
+          for (key in session) {
+            results.push(_this.appendingData(session[key].trainingName, session[key].date, session[key].howManyTimes, session[key].reps));
+          }
+          return results;
+        };
+      })(this)), function(errorObject) {
+        return console.log('The read failed: ', errorObject.code);
       });
+    };
+
+    LogerApp.prototype.appendingData = function(trainingName, date, howManyTimes, reps) {
+      var trainingNumber;
+      trainingNumber = document.querySelector('.user-training-number');
+      return trainingNumber.innerHTML = trainingName.length;
+    };
+
+    LogerApp.prototype.testForUid = function() {
+      var object, regex;
+      regex = /facebook:[0-9]+$/gm;
+      object = window.localStorage['firebase:session::loger'] ? JSON.parse(window.localStorage['firebase:session::loger']).uid : [];
+      if (typeof object === "object" || !object.match(regex)) {
+        window.location.href = 'http://localhost:9000/';
+      }
     };
 
     return LogerApp;

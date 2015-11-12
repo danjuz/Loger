@@ -22,6 +22,9 @@ class LogerApp
 
         @logoutButton = document.querySelector('.header__main-container-logout')
 
+        @spinnerContainer = document.querySelector('.spinner-wrapper')
+        @headerHref = document.querySelector('.header__main-container-logo-href')
+
         @bindInitialEvents()
 
     bindInitialEvents: =>
@@ -88,6 +91,11 @@ class LogerApp
     saveUserToFirebase: (userData) =>
         @checkIfUserExists userData.facebook.id, userData
 
+    checkIfUserExists: (userId, userData) =>
+        @connectionToFirebase.child("users").child(userId).once 'value', (snapshot) =>
+            exists = snapshot.val() != null
+            @userExistsCallback userId, exists, userData
+
     userExistsCallback: (userId, exists, userData) =>
         if exists
             window.location.href = 'http://localhost:9000/logg-results.html'
@@ -104,11 +112,6 @@ class LogerApp
                 gender: fbInformation.facebook.cachedUserProfile.gender
 
             window.location.href = 'http://localhost:9000/logg-results.html'
-
-    checkIfUserExists: (userId, userData) =>
-        @connectionToFirebase.child("users").child(userId).once 'value', (snapshot) =>
-            exists = snapshot.val() != null
-            @userExistsCallback userId, exists, userData
 
     addEditWorkOut: =>
         @bindEvents
@@ -144,7 +147,7 @@ class LogerApp
         okButton.appendChild(okButtonText)
         tdMultiSymbol.appendChild(multiSymbol)
 
-        # Add classname to elements
+        # Add classname and required attr to elements
 
         background.className = 'work-out-container--background'
         table.className = 'work-out-container__table'
@@ -371,7 +374,7 @@ class LogerApp
 
             for key of session
                 @appendingData session[key].trainingName, session[key].date, session[key].howManyTimes, session[key].reps,
-
+            @headerHref.classList.remove('spinner')
             ), (errorObject) ->
               console.log 'The read failed: ', errorObject.code
 
@@ -383,17 +386,22 @@ class LogerApp
         #test if visitor has id from facebook login, if not, redirect to login page. Vaildate with regex.
         regex = /facebook:[0-9]+$/gm
         object = if window.localStorage['firebase:session::loger'] then JSON.parse(window.localStorage['firebase:session::loger']).uid else []
+        fbImg = if window.localStorage['firebase:session::loger'] then JSON.parse(window.localStorage['firebase:session::loger']) else []
+        @addImgToLogo fbImg.facebook.profileImageURL
 
         if typeof object == "object" || !object.match regex
             window.location.href = 'http://localhost:9000/'
             return
+
     flash: =>
         @saveButton.innerHTML = "<div class='flash'>Sparat</div>"
         window.setTimeout (=>
-            @saveButton.innerHTML = "<div>Spara</div>"
             window.location.href = 'http://localhost:9000/logg-results.html'
             return
-            ), 4000
+            ), 1500
+
+    addImgToLogo: (imgUrl) =>
+        @headerHref.setAttribute 'src', imgUrl
 
 document.addEventListener 'DOMContentLoaded', (event) =>
     logerApp = new LogerApp()

@@ -6,6 +6,7 @@
 
   LogerApp = (function() {
     function LogerApp() {
+      this.addImgToLogo = bind(this.addImgToLogo, this);
       this.flash = bind(this.flash, this);
       this.testForUid = bind(this.testForUid, this);
       this.appendingData = bind(this.appendingData, this);
@@ -19,8 +20,8 @@
       this.noEditMode = bind(this.noEditMode, this);
       this.getContentInput = bind(this.getContentInput, this);
       this.addEditWorkOut = bind(this.addEditWorkOut, this);
-      this.checkIfUserExists = bind(this.checkIfUserExists, this);
       this.userExistsCallback = bind(this.userExistsCallback, this);
+      this.checkIfUserExists = bind(this.checkIfUserExists, this);
       this.saveUserToFirebase = bind(this.saveUserToFirebase, this);
       this.redirectWithFBAndFB = bind(this.redirectWithFBAndFB, this);
       this.dateOfToday = bind(this.dateOfToday, this);
@@ -40,6 +41,8 @@
       this.quantitytInput = document.querySelectorAll('.work-out-container__table-add__quanity-input');
       this.multiInput = document.querySelectorAll('.work-out-container__table-add__workout-multiplication-input');
       this.logoutButton = document.querySelector('.header__main-container-logout');
+      this.spinnerContainer = document.querySelector('.spinner-wrapper');
+      this.headerHref = document.querySelector('.header__main-container-logo-href');
       this.bindInitialEvents();
     }
 
@@ -135,6 +138,16 @@
       return this.checkIfUserExists(userData.facebook.id, userData);
     };
 
+    LogerApp.prototype.checkIfUserExists = function(userId, userData) {
+      return this.connectionToFirebase.child("users").child(userId).once('value', (function(_this) {
+        return function(snapshot) {
+          var exists;
+          exists = snapshot.val() !== null;
+          return _this.userExistsCallback(userId, exists, userData);
+        };
+      })(this));
+    };
+
     LogerApp.prototype.userExistsCallback = function(userId, exists, userData) {
       var fbInformation, id, usersRef;
       if (exists) {
@@ -152,16 +165,6 @@
         });
         return window.location.href = 'http://localhost:9000/logg-results.html';
       }
-    };
-
-    LogerApp.prototype.checkIfUserExists = function(userId, userData) {
-      return this.connectionToFirebase.child("users").child(userId).once('value', (function(_this) {
-        return function(snapshot) {
-          var exists;
-          exists = snapshot.val() !== null;
-          return _this.userExistsCallback(userId, exists, userData);
-        };
-      })(this));
     };
 
     LogerApp.prototype.addEditWorkOut = function() {
@@ -392,14 +395,13 @@
       resultUid = uid.slice(9);
       return this.connectionToFirebase.on('child_added', ((function(_this) {
         return function(snapshot, prevChildKey) {
-          var data, key, results, session;
+          var data, key, session;
           data = snapshot.val();
           session = data[resultUid].sessions;
-          results = [];
           for (key in session) {
-            results.push(_this.appendingData(session[key].trainingName, session[key].date, session[key].howManyTimes, session[key].reps));
+            _this.appendingData(session[key].trainingName, session[key].date, session[key].howManyTimes, session[key].reps);
           }
-          return results;
+          return _this.headerHref.classList.remove('spinner');
         };
       })(this)), function(errorObject) {
         return console.log('The read failed: ', errorObject.code);
@@ -413,9 +415,11 @@
     };
 
     LogerApp.prototype.testForUid = function() {
-      var object, regex;
+      var fbImg, object, regex;
       regex = /facebook:[0-9]+$/gm;
       object = window.localStorage['firebase:session::loger'] ? JSON.parse(window.localStorage['firebase:session::loger']).uid : [];
+      fbImg = window.localStorage['firebase:session::loger'] ? JSON.parse(window.localStorage['firebase:session::loger']) : [];
+      this.addImgToLogo(fbImg.facebook.profileImageURL);
       if (typeof object === "object" || !object.match(regex)) {
         window.location.href = 'http://localhost:9000/';
       }
@@ -425,10 +429,13 @@
       this.saveButton.innerHTML = "<div class='flash'>Sparat</div>";
       return window.setTimeout(((function(_this) {
         return function() {
-          _this.saveButton.innerHTML = "<div>Spara</div>";
           window.location.href = 'http://localhost:9000/logg-results.html';
         };
-      })(this)), 4000);
+      })(this)), 1500);
+    };
+
+    LogerApp.prototype.addImgToLogo = function(imgUrl) {
+      return this.headerHref.setAttribute('src', imgUrl);
     };
 
     return LogerApp;

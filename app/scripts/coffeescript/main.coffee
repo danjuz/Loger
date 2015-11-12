@@ -34,6 +34,7 @@ class LogerApp
             @testForUid()
             @stopWatch()
             @saveButton.addEventListener 'click', =>
+                @flash()
                 @saveContentToFireBase()
 
             @logoutButton.addEventListener 'click', =>
@@ -386,6 +387,13 @@ class LogerApp
         if typeof object == "object" || !object.match regex
             window.location.href = 'http://localhost:9000/'
             return
+    flash: =>
+        @saveButton.innerHTML = "<div class='flash'>Sparat</div>"
+        window.setTimeout (=>
+            @saveButton.innerHTML = "<div>Spara</div>"
+            window.location.href = 'http://localhost:9000/logg-results.html'
+            return
+            ), 4000
 
 document.addEventListener 'DOMContentLoaded', (event) =>
     logerApp = new LogerApp()

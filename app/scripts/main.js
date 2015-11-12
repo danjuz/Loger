@@ -6,6 +6,7 @@
 
   LogerApp = (function() {
     function LogerApp() {
+      this.flash = bind(this.flash, this);
       this.testForUid = bind(this.testForUid, this);
       this.appendingData = bind(this.appendingData, this);
       this.retrievingData = bind(this.retrievingData, this);
@@ -56,6 +57,7 @@
         this.stopWatch();
         this.saveButton.addEventListener('click', (function(_this) {
           return function() {
+            _this.flash();
             return _this.saveContentToFireBase();
           };
         })(this));
@@ -417,6 +419,16 @@
       if (typeof object === "object" || !object.match(regex)) {
         window.location.href = 'http://localhost:9000/';
       }
+    };
+
+    LogerApp.prototype.flash = function() {
+      this.saveButton.innerHTML = "<div class='flash'>Sparat</div>";
+      return window.setTimeout(((function(_this) {
+        return function() {
+          _this.saveButton.innerHTML = "<div>Spara</div>";
+          window.location.href = 'http://localhost:9000/logg-results.html';
+        };
+      })(this)), 4000);
     };
 
     return LogerApp;

@@ -3,6 +3,7 @@ dateNames = ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt
 class LogerApp
     constructor: ->
         @connectionToFirebase = new Firebase('https://loger.firebaseio.com/')
+        @url ='http://loger.daju.se/'
 
         @loginButton = document.querySelector('.register-login-container__button')
         @addButton = document.querySelector('.add-container__button')
@@ -42,7 +43,7 @@ class LogerApp
 
             @logoutButton.addEventListener 'click', =>
                 localStorage.clear()
-                window.location.href = 'http://localhost:9000/'
+                window.location.href = @url
 
             @addButton.addEventListener 'click', =>
                 @addEditWorkOut()
@@ -98,7 +99,7 @@ class LogerApp
 
     userExistsCallback: (userId, exists, userData) =>
         if exists
-            window.location.href = 'http://localhost:9000/logg-results.html'
+            window.location.href = @url+'logg-results.html'
         else
             fbInformation = userData
             id = fbInformation.facebook.id
@@ -111,7 +112,7 @@ class LogerApp
                 profileImageURL: fbInformation.facebook.profileImageURL,
                 gender: fbInformation.facebook.cachedUserProfile.gender
 
-            window.location.href = 'http://localhost:9000/logg-results.html'
+            window.location.href = @url+'logg-results.html'
 
     addEditWorkOut: =>
         @bindEvents
@@ -390,13 +391,13 @@ class LogerApp
         @addImgToLogo fbImg.facebook.profileImageURL
 
         if typeof object == "object" || !object.match regex
-            window.location.href = 'http://localhost:9000/'
+            window.location.href = @url
             return
 
     flash: =>
         @saveButton.innerHTML = "<div class='flash'>Sparat</div>"
         window.setTimeout (=>
-            window.location.href = 'http://localhost:9000/logg-results.html'
+            window.location.href = @url+'logg-results.html'
             return
             ), 1500
 

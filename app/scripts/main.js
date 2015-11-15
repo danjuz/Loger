@@ -41,7 +41,7 @@
       this.nameInput = document.querySelectorAll('.work-out-container__table-add__name-input');
       this.quantitytInput = document.querySelectorAll('.work-out-container__table-add__quanity-input');
       this.multiInput = document.querySelectorAll('.work-out-container__table-add__workout-multiplication-input');
-      this.logoutButton = document.querySelector('.header__main-container-logout');
+      this.logoutButton = document.querySelector('.footer__main-container-logout');
       this.spinnerContainer = document.querySelector('.spinner-wrapper');
       this.headerHref = document.querySelector('.header__main-container-logo-href');
       this.arrayTraining = [];

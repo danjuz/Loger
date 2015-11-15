@@ -4,10 +4,12 @@
     color: #90EDD2;
 }
 
-.header__main-container-logout{
+.footer__main-container-logout{
     position: fixed;
-    bottom: 0.3em;
-    right: 1em;
+    bottom: 20px;
+    right: 50px;
     cursor: pointer;
-    font-size: 0.8em;
+    img{
+        width: 30px;
+    }
 }

@@ -9,7 +9,7 @@
       this.addImgToLogo = bind(this.addImgToLogo, this);
       this.flash = bind(this.flash, this);
       this.testForUid = bind(this.testForUid, this);
-      this.appendingData = bind(this.appendingData, this);
+      this.appendingDataStatistic = bind(this.appendingDataStatistic, this);
       this.retrievingData = bind(this.retrievingData, this);
       this.saveContentToFireBase = bind(this.saveContentToFireBase, this);
       this.stopWatch = bind(this.stopWatch, this);
@@ -27,6 +27,7 @@
       this.dateOfToday = bind(this.dateOfToday, this);
       this.bindInitialEvents = bind(this.bindInitialEvents, this);
       this.connectionToFirebase = new Firebase('https://loger.firebaseio.com/');
+      this.url = 'http://localhost:9000/';
       this.loginButton = document.querySelector('.register-login-container__button');
       this.addButton = document.querySelector('.add-container__button');
       this.saveButton = document.querySelector('.save-content__button');
@@ -43,21 +44,24 @@
       this.logoutButton = document.querySelector('.header__main-container-logout');
       this.spinnerContainer = document.querySelector('.spinner-wrapper');
       this.headerHref = document.querySelector('.header__main-container-logo-href');
+      this.arrayTraining = [];
+      this.arrayTrainginName = [];
       this.bindInitialEvents();
     }
 
     LogerApp.prototype.bindInitialEvents = function() {
       this.dateOfToday();
-      if (window.location.href === 'http://localhost:9000/' || window.location.href === 'http://www.localhost:9000/') {
-        this.loginButton.addEventListener('click', (function(_this) {
+      if (window.location.href === 'http://loger.daju.se/' || window.location.href === 'http://localhost:9000/') {
+        this.loginButton.addEventListener('click', ((function(_this) {
           return function() {
-            return _this.redirectWithFBAndFB();
+            _this.redirectWithFBAndFB();
           };
-        })(this));
+        })(this)), false);
       }
-      if (window.location.href === 'http://localhost:9000/logg-results.html' || window.location.href === 'http://localhost:9000/logg-results.html') {
+      if (window.location.href === 'http://localhost:9000/logg-results.html' || window.location.href === 'http://loger.daju.se/logg-results.html') {
         this.testForUid();
         this.stopWatch();
+        this.addImgToLogo();
         this.saveButton.addEventListener('click', (function(_this) {
           return function() {
             _this.flash();
@@ -67,35 +71,38 @@
         this.logoutButton.addEventListener('click', (function(_this) {
           return function() {
             localStorage.clear();
-            return window.location.href = 'http://localhost:9000/';
+            return window.location.href = _this.url;
           };
         })(this));
         this.addButton.addEventListener('click', (function(_this) {
           return function() {
-            var allEditButtons, allWorkOutDeleteButtons, allWorkOutOkButtons, i, item, j, k, len, len1, len2, multiplyName, quantityName, results, showName;
+            var allEditButtons, allWorkOutDeleteButtons, allWorkOutOkButtons, item, j, k, len, len1, results;
             _this.addEditWorkOut();
             _this.removeClass(_this.saveButton, 'hidden');
             _this.removeClass(_this.timerContainer, 'hidden');
             allWorkOutOkButtons = document.querySelectorAll('.work-out-container__table-add__ok-button');
             allWorkOutDeleteButtons = document.querySelectorAll('.work-out-container__table-add__delete-button');
             allEditButtons = document.getElementsByClassName('show-work-out-container__table-add__edit-button');
-            showName = document.querySelectorAll('show-work-out-container__table-add__nameInput');
-            quantityName = document.querySelectorAll('show-work-out-container__table-add__quantityInput');
-            multiplyName = document.querySelectorAll('show-work-out-container__table-add__multiplyInput');
-            for (i = 0, len = allWorkOutOkButtons.length; i < len; i++) {
-              item = allWorkOutOkButtons[i];
+            _this.showName = document.querySelectorAll('show-work-out-container__table-add__nameInput');
+            _this.quantityName = document.querySelectorAll('show-work-out-container__table-add__quantityInput');
+            _this.multiplyName = document.querySelectorAll('show-work-out-container__table-add__multiplyInput');
+            for (j = 0, len = allWorkOutOkButtons.length; j < len; j++) {
+              item = allWorkOutOkButtons[j];
               item.addEventListener('click', function(e) {
-                return _this.getContentInput(e);
-              });
-            }
-            for (j = 0, len1 = allEditButtons.length; j < len1; j++) {
-              item = allEditButtons[j];
-              item.addEventListener('click', function(e) {
-                return _this.backToEditMode(e);
+                var k, len1, results;
+                _this.getContentInput(e);
+                results = [];
+                for (k = 0, len1 = allEditButtons.length; k < len1; k++) {
+                  item = allEditButtons[k];
+                  results.push(item.addEventListener('click', function(e) {
+                    return _this.backToEditMode(e);
+                  }));
+                }
+                return results;
               });
             }
             results = [];
-            for (k = 0, len2 = allWorkOutDeleteButtons.length; k < len2; k++) {
+            for (k = 0, len1 = allWorkOutDeleteButtons.length; k < len1; k++) {
               item = allWorkOutDeleteButtons[k];
               results.push(item.addEventListener('click', function(e) {
                 return _this.deleteIt(e);
@@ -105,9 +112,10 @@
           };
         })(this));
       }
-      if (window.location.href === 'http://localhost:9000/statistic.html' || window.location.href === 'http://www.localhost:9000/statistic.html') {
+      if (window.location.href === 'http://localhost:9000/statistic.html' || window.location.href === 'http://loger.daju.se/statistic.html') {
         this.testForUid();
-        return this.retrievingData();
+        this.retrievingData();
+        return this.addImgToLogo();
       }
     };
 
@@ -151,7 +159,7 @@
     LogerApp.prototype.userExistsCallback = function(userId, exists, userData) {
       var fbInformation, id, usersRef;
       if (exists) {
-        return window.location.href = 'http://localhost:9000/logg-results.html';
+        return window.location.href = this.url + 'logg-results.html';
       } else {
         fbInformation = userData;
         id = fbInformation.facebook.id;
@@ -163,7 +171,7 @@
           profileImageURL: fbInformation.facebook.profileImageURL,
           gender: fbInformation.facebook.cachedUserProfile.gender
         });
-        return window.location.href = 'http://localhost:9000/logg-results.html';
+        return window.location.href = this.url + 'logg-results.html';
       }
     };
 
@@ -230,21 +238,23 @@
     };
 
     LogerApp.prototype.getContentInput = function(e) {
-      var backgroundElement, multiplyPlaceholder, nameInputValue, namePlaceholder, quantityInputValue, quantityPlaceholder, repQuantityValue, showElement, tableElement;
-      nameInputValue = e.target.parentElement.parentElement.parentElement.childNodes[0].childNodes[0].childNodes[0].value;
-      quantityInputValue = e.target.parentElement.parentElement.parentElement.childNodes[1].childNodes[0].childNodes[0].value;
-      repQuantityValue = e.target.parentElement.parentElement.parentElement.childNodes[1].childNodes[2].childNodes[0].value;
+      var backgroundElement, multiplyPlaceholder, namePlaceholder, nameValueEdit, quantityInputValue, quantityPlaceholder, repQuantityValue, showElement, tableElement;
       backgroundElement = e.target.parentElement.parentElement.parentElement.parentElement;
       namePlaceholder = e.target.parentElement.parentElement.parentElement.parentElement.childNodes[1];
       quantityPlaceholder = e.target.parentElement.parentElement.parentElement.parentElement.childNodes[1];
-      multiplyPlaceholder = e.target.parentElement.parentElement.parentElement;
+      multiplyPlaceholder = e.target.parentElement.parentElement.parentElement.parentElement.childNodes[1];
+      nameValueEdit = e.target.parentElement.parentElement.parentElement.parentElement.childNodes[0].childNodes[0].childNodes[0].childNodes[0].value;
+      quantityInputValue = e.target.parentElement.parentElement.parentElement.childNodes[1].childNodes[0].childNodes[0].value;
+      repQuantityValue = e.target.parentElement.parentElement.parentElement.childNodes[1].childNodes[2].childNodes[0].value;
       if (e.target.parentNode.parentNode.parentNode.parentNode.childNodes[1]) {
+        console.log('namePlaceholder ', namePlaceholder);
+        console.log('quantityPlaceholder ', quantityPlaceholder);
         tableElement = e.target.parentElement.parentElement.parentElement;
         showElement = e.target.parentNode.parentNode.parentNode.parentNode.childNodes[1];
         this.addClass(tableElement, 'hidden');
         return this.removeClass(showElement, 'hidden');
       } else {
-        return this.noEditMode(e, nameInputValue, quantityInputValue, repQuantityValue, backgroundElement);
+        return this.noEditMode(e, nameValueEdit, quantityInputValue, repQuantityValue, backgroundElement);
       }
     };
 
@@ -366,7 +376,7 @@
     };
 
     LogerApp.prototype.saveContentToFireBase = function() {
-      var date, howManyTimes, i, item, postsRef, ref1, reps, resultUid, results, time, trainingName, uid, workoutcontainer;
+      var date, howManyTimes, item, j, postsRef, ref1, reps, resultUid, results, time, trainingName, uid, workoutcontainer;
       trainingName = document.querySelectorAll('.show-work-out-container__table-add__nameInput');
       reps = document.querySelectorAll('.show-work-out-container__table-add__quantityInput');
       howManyTimes = document.querySelectorAll('.show-work-out-container__table-add__multiplyInput');
@@ -377,7 +387,7 @@
       resultUid = uid.slice(9);
       postsRef = this.connectionToFirebase.child("users").child(resultUid).child("sessions");
       results = [];
-      for (item = i = 0, ref1 = workoutcontainer.length; i < ref1; item = i += 1) {
+      for (item = j = 0, ref1 = workoutcontainer.length; j < ref1; item = j += 1) {
         results.push(postsRef.push({
           'trainingName': trainingName[item].textContent,
           'reps': reps[item].textContent,
@@ -395,11 +405,12 @@
       resultUid = uid.slice(9);
       return this.connectionToFirebase.on('child_added', ((function(_this) {
         return function(snapshot, prevChildKey) {
-          var data, key, session;
+          var data, key, objLength, session;
           data = snapshot.val();
           session = data[resultUid].sessions;
+          objLength = Object.keys(session).length;
           for (key in session) {
-            _this.appendingData(session[key].trainingName, session[key].date, session[key].howManyTimes, session[key].reps);
+            _this.appendingDataStatistic(session[key].trainingName, session[key].date, session[key].howManyTimes, session[key].reps);
           }
           return _this.headerHref.classList.remove('spinner');
         };
@@ -408,20 +419,29 @@
       });
     };
 
-    LogerApp.prototype.appendingData = function(trainingName, date, howManyTimes, reps) {
-      var trainingNumber;
-      trainingNumber = document.querySelector('.user-training-number');
-      return trainingNumber.innerHTML = trainingName.length;
+    LogerApp.prototype.appendingDataStatistic = function(trainingName, date, howManyTimes, reps) {
+      var i, li, results, trainingNameWrapperUl, trainingNum;
+      trainingNum = document.querySelector('.user-training-number');
+      trainingNameWrapperUl = document.querySelector('.trainingName');
+      li = document.createElement('li');
+      this.arrayTraining.push([trainingName, date, howManyTimes, reps]);
+      this.arrayTrainginName.push([this.arrayTraining[this.arrayTraining.length - 1][0]]);
+      trainingNum.innerHTML = this.arrayTraining.length;
+      i = 0;
+      results = [];
+      while (i <= 3) {
+        trainingNameWrapperUl.innerHTML = this.arrayTrainginName;
+        results.push(i++);
+      }
+      return results;
     };
 
     LogerApp.prototype.testForUid = function() {
-      var fbImg, object, regex;
+      var object, regex;
       regex = /facebook:[0-9]+$/gm;
       object = window.localStorage['firebase:session::loger'] ? JSON.parse(window.localStorage['firebase:session::loger']).uid : [];
-      fbImg = window.localStorage['firebase:session::loger'] ? JSON.parse(window.localStorage['firebase:session::loger']) : [];
-      this.addImgToLogo(fbImg.facebook.profileImageURL);
       if (typeof object === "object" || !object.match(regex)) {
-        window.location.href = 'http://localhost:9000/';
+        window.location.href = this.url;
       }
     };
 
@@ -429,13 +449,15 @@
       this.saveButton.innerHTML = "<div class='flash'>Sparat</div>";
       return window.setTimeout(((function(_this) {
         return function() {
-          window.location.href = 'http://localhost:9000/logg-results.html';
+          window.location.href = _this.url + 'logg-results.html';
         };
       })(this)), 1500);
     };
 
-    LogerApp.prototype.addImgToLogo = function(imgUrl) {
-      return this.headerHref.setAttribute('src', imgUrl);
+    LogerApp.prototype.addImgToLogo = function() {
+      var fbImg;
+      fbImg = window.localStorage['firebase:session::loger'] ? JSON.parse(window.localStorage['firebase:session::loger']) : [];
+      return this.headerHref.setAttribute('src', fbImg.facebook.profileImageURL);
     };
 
     return LogerApp;

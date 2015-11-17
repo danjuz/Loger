@@ -1,6 +1,6 @@
 <!doctype html>
 <html>
-  <head>
+<head>
     <meta charset='utf-8'>
     <meta name='description' content=''>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -10,64 +10,51 @@
     <link rel='apple-touch-icon' href='apple-touch-icon.png'>
     <link rel='stylesheet' href='styles/main.css'>
 
-  </head>
-  <body>
+</head>
+<body>
     <script>
-      window.fbAsyncInit = function() {
+    window.fbAsyncInit = function() {
         FB.init({
-          appId      : '733864700072614',
-          xfbml      : true,
-          version    : 'v2.4'
+            appId      : '733864700072614',
+            xfbml      : true,
+            version    : 'v2.4'
         });
-      };
+    };
 
-      (function(d, s, id){
-         var js, fjs = d.getElementsByTagName(s)[0];
-         if (d.getElementById(id)) {return;}
-         js = d.createElement(s); js.id = id;
-         js.src = '//connect.facebook.net/en_US/sdk.js';
-         fjs.parentNode.insertBefore(js, fjs);
-       }(document, 'script', 'facebook-jssdk'));
+    (function(d, s, id){
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) {return;}
+        js = d.createElement(s); js.id = id;
+        js.src = '//connect.facebook.net/en_US/sdk.js';
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
 
     </script>
-
     <div class='main-container'>
-      <ul class='header top-spacing'>
-        <li class='header__date-area'></li>
-        <li class='header__main-container-logo'><img src="" class="header__main-container-logo-href"></li>
-        <li class='header__main-container-statistic icon'><a href='statistic.html'><img src='../images/statistic.png'></a></li>
-      </ul>
-      <div class='add-container'>
-        <div class="add-container__form-container hidden">
-          <form class= 'add-container__form-container__form top-bottom-spacing'>
-            <div class="add-container__form-container__form__play-button icon"></div>
-            <input type="text" class="add-container__form-container__form__timer-input" placeholder="00:00" />
-            <div class="add-container__form__pause-button icon"></div>
-          </form>
+        <ul class='header top-spacing'>
+            <li class='header__date-area'></li>
+            <li class='header__main-container-logo'><img src="" class="header__main-container-logo-href"></li>
+            <li class='header__main-container-statistic icon'><a href='statistic.html'><img src='../images/statistic.png'></a></li>
+        </ul>
+        <div class='add-container'>
+            <div class="add-container__form-container hidden">
+                <form class= 'add-container__form-container__form top-bottom-spacing'>
+                    <div class="add-container__form-container__form__play-button icon"></div>
+                    <input type="text" class="add-container__form-container__form__timer-input" placeholder="00:00" />
+                    <div class="add-container__form__pause-button icon"></div>
+                </form>
+            </div>
+            <div class='add-container__information'>Logga dagens träning</div>
+            <div class='add-container__button'><img src='../images/plus.png'></div>
         </div>
-        <div class='add-container__information'>Logga dagens träning</div>
-        <div class='add-container__button'><img src='../images/plus.png'></div>
-      </div>
-      <div class='work-out-container'></div>
-      <div class="save-content__button hidden">Spara</div>
-      <div class='footer-area'>
-      </div>
+        <div class='work-out-container'></div>
+        <div class="save-content__button hidden">Spara</div>
+        <div class='footer-area'>
+        </div>
     </div>
     <footer>
         <div class='footer__main-container-logout'><img src='../images/logout.png'></div>
-
     </footer>
-
-    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
-    <script>
-      (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
-      function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
-      e=o.createElement(i);r=o.getElementsByTagName(i)[0];
-      e.src='https://www.google-analytics.com/analytics.js';
-      r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
-      ga('create','UA-XXXXX-X');ga('send','pageview');
-    </script>
-
     <script src='scripts/main.js'></script>
-  </body>
+</body>
 </html>

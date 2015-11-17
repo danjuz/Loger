@@ -240,15 +240,16 @@
     LogerApp.prototype.getContentInput = function(e) {
       var backgroundElement, multiplyPlaceholder, namePlaceholder, nameValueEdit, quantityInputValue, quantityPlaceholder, repQuantityValue, showElement, tableElement;
       backgroundElement = e.target.parentElement.parentElement.parentElement.parentElement;
-      namePlaceholder = e.target.parentElement.parentElement.parentElement.parentElement.childNodes[1];
-      quantityPlaceholder = e.target.parentElement.parentElement.parentElement.parentElement.childNodes[1];
-      multiplyPlaceholder = e.target.parentElement.parentElement.parentElement.parentElement.childNodes[1];
       nameValueEdit = e.target.parentElement.parentElement.parentElement.parentElement.childNodes[0].childNodes[0].childNodes[0].childNodes[0].value;
       quantityInputValue = e.target.parentElement.parentElement.parentElement.childNodes[1].childNodes[0].childNodes[0].value;
       repQuantityValue = e.target.parentElement.parentElement.parentElement.childNodes[1].childNodes[2].childNodes[0].value;
       if (e.target.parentNode.parentNode.parentNode.parentNode.childNodes[1]) {
-        console.log('namePlaceholder ', namePlaceholder);
-        console.log('quantityPlaceholder ', quantityPlaceholder);
+        namePlaceholder = e.target.parentElement.parentElement.parentElement.parentElement.childNodes[1].childNodes[0].childNodes[0].childNodes[0];
+        quantityPlaceholder = e.target.parentElement.parentElement.parentElement.parentElement.childNodes[1].childNodes[1].childNodes[0].childNodes[0];
+        multiplyPlaceholder = e.target.parentElement.parentElement.parentElement.parentElement.childNodes[1].childNodes[1].childNodes[2].childNodes[0];
+        namePlaceholder.innerHTML = nameValueEdit;
+        quantityPlaceholder.innerHTML = quantityInputValue;
+        multiplyPlaceholder.innerHTML = repQuantityValue;
         tableElement = e.target.parentElement.parentElement.parentElement;
         showElement = e.target.parentNode.parentNode.parentNode.parentNode.childNodes[1];
         this.addClass(tableElement, 'hidden');

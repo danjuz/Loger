@@ -197,20 +197,21 @@ class LogerApp
 
     getContentInput: (e) =>
         #Get and put input value into variables
-        nameInputValue = e.target.parentElement.parentElement.parentElement.childNodes[0].childNodes[0].childNodes[0].value
-        quantityInputValue = e.target.parentElement.parentElement.parentElement.childNodes[1].childNodes[0].childNodes[0].value
-        repQuantityValue = e.target.parentElement.parentElement.parentElement.childNodes[1].childNodes[2].childNodes[0].value
         backgroundElement = e.target.parentElement.parentElement.parentElement.parentElement
 
-        namePlaceholder = e.target.parentElement.parentElement.parentElement.parentElement.childNodes[1]
-        quantityPlaceholder = e.target.parentElement.parentElement.parentElement.parentElement.childNodes[1]
-        multiplyPlaceholder = e.target.parentElement.parentElement.parentElement
+        nameValueEdit = e.target.parentElement.parentElement.parentElement.parentElement.childNodes[0].childNodes[0].childNodes[0].childNodes[0].value
+        quantityInputValue = e.target.parentElement.parentElement.parentElement.childNodes[1].childNodes[0].childNodes[0].value
+        repQuantityValue = e.target.parentElement.parentElement.parentElement.childNodes[1].childNodes[2].childNodes[0].value
 
         if(e.target.parentNode.parentNode.parentNode.parentNode.childNodes[1])
+            namePlaceholder = e.target.parentElement.parentElement.parentElement.parentElement.childNodes[1].childNodes[0].childNodes[0].childNodes[0]
+            quantityPlaceholder = e.target.parentElement.parentElement.parentElement.parentElement.childNodes[1].childNodes[1].childNodes[0].childNodes[0]
+            multiplyPlaceholder = e.target.parentElement.parentElement.parentElement.parentElement.childNodes[1].childNodes[1].childNodes[2].childNodes[0]
+
             # Put value inside the right div
-            #namePlaceholder.innerHTML = nameInputValue
-            #@quantityName.innerHTML = quantityInputValue
-            #@multiplyName.innerHTML = repQuantityValue
+            namePlaceholder.innerHTML = nameValueEdit
+            quantityPlaceholder.innerHTML = quantityInputValue
+            multiplyPlaceholder.innerHTML = repQuantityValue
 
             tableElement = e.target.parentElement.parentElement.parentElement
             showElement = e.target.parentNode.parentNode.parentNode.parentNode.childNodes[1]
@@ -219,7 +220,7 @@ class LogerApp
             @removeClass showElement, 'hidden'
 
         else
-            @noEditMode(e, nameInputValue, quantityInputValue, repQuantityValue, backgroundElement)
+            @noEditMode(e, nameValueEdit, quantityInputValue, repQuantityValue, backgroundElement)
 
     noEditMode: (e, nameInputValue, quantityInputValue, repQuantityValue, backgroundElement) =>
         #Hide table

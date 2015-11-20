@@ -3,7 +3,8 @@ dateNames = ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt
 class LogerApp
     constructor: ->
         @connectionToFirebase = new Firebase('https://loger.firebaseio.com/')
-        @url ='http://loger.daju.se/'
+        #@url ='http://loger.daju.se/'
+        @url ='http://localhost:9000/'
 
         @loginButton = document.querySelector('.register-login-container__button')
         @addButton = document.querySelector('.add-container__button')
@@ -30,11 +31,13 @@ class LogerApp
 
     bindInitialEvents: =>
         @dateOfToday()
-        if (window.location.href == 'http://localhost:9000/' || window.location.href == 'http://www.localhost:9000/' )
-            @loginButton.addEventListener 'click', =>
+        if (window.location.href == 'http://loger.daju.se/' || window.location.href == 'http://localhost:9000/' )
+            @loginButton.addEventListener 'click', (=>
                 @redirectWithFBAndFB()
+                return
+                ), false
 
-        if (window.location.href == 'http://localhost:9000/logg-results.html' || window.location.href == 'http://localhost:9000/logg-results.html')
+        if (window.location.href == 'http://localhost:9000/logg-results.html' || window.location.href == 'http://loger.daju.se/logg-results.html')
             @testForUid()
             @stopWatch()
             @saveButton.addEventListener 'click', =>
@@ -69,7 +72,7 @@ class LogerApp
                   item.addEventListener 'click', (e)=>
                       @deleteIt(e)
 
-        if (window.location.href == 'http://localhost:9000/statistic.html' || window.location.href == 'http://www.localhost:9000/statistic.html')
+        if (window.location.href == 'http://localhost:9000/statistic.html' || window.location.href == 'http://loger.daju.se/statistic.html')
             @testForUid()
             @retrievingData()
 

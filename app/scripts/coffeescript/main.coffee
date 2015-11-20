@@ -22,10 +22,12 @@ class LogerApp
         @quantitytInput = document.querySelectorAll('.work-out-container__table-add__quanity-input')
         @multiInput = document.querySelectorAll('.work-out-container__table-add__workout-multiplication-input')
 
-        @logoutButton = document.querySelector('.header__main-container-logout')
+        @logoutButton = document.querySelector('.footer__main-container-logout')
 
         @spinnerContainer = document.querySelector('.spinner-wrapper')
         @headerHref = document.querySelector('.header__main-container-logo-href')
+        @arrayTraining = []
+        @arrayTrainginName = []
 
         @bindInitialEvents()
 
@@ -40,6 +42,8 @@ class LogerApp
         if (window.location.href == 'http://localhost:9000/logg-results.html' || window.location.href == 'http://loger.daju.se/logg-results.html')
             @testForUid()
             @stopWatch()
+            @addImgToLogo()
+
             @saveButton.addEventListener 'click', =>
                 @flash()
                 @saveContentToFireBase()
@@ -56,25 +60,26 @@ class LogerApp
                 allWorkOutOkButtons = document.querySelectorAll('.work-out-container__table-add__ok-button')
                 allWorkOutDeleteButtons = document.querySelectorAll('.work-out-container__table-add__delete-button')
                 allEditButtons = document.getElementsByClassName('show-work-out-container__table-add__edit-button')
-                showName = document.querySelectorAll('show-work-out-container__table-add__nameInput')
-                quantityName = document.querySelectorAll('show-work-out-container__table-add__quantityInput')
-                multiplyName = document.querySelectorAll('show-work-out-container__table-add__multiplyInput')
+                @showName = document.querySelectorAll('show-work-out-container__table-add__nameInput')
+                @quantityName = document.querySelectorAll('show-work-out-container__table-add__quantityInput')
+                @multiplyName = document.querySelectorAll('show-work-out-container__table-add__multiplyInput')
 
                 for item in allWorkOutOkButtons
                     item.addEventListener 'click', (e)=>
                         @getContentInput(e)
 
-                  for item in allEditButtons
-                      item.addEventListener 'click', (e)=>
-                          @backToEditMode(e)
+                        for item in allEditButtons
+                            item.addEventListener 'click', (e)=>
+                                @backToEditMode(e)
 
                 for item in allWorkOutDeleteButtons
-                  item.addEventListener 'click', (e)=>
-                      @deleteIt(e)
+                    item.addEventListener 'click', (e)=>
+                        @deleteIt(e)
 
         if (window.location.href == 'http://localhost:9000/statistic.html' || window.location.href == 'http://loger.daju.se/statistic.html')
             @testForUid()
             @retrievingData()
+            @addImgToLogo()
 
     dateOfToday: =>
         today = new Date()
@@ -377,22 +382,33 @@ class LogerApp
             data =  snapshot.val()
             session = data[resultUid].sessions
 
+            objLength = Object.keys(session).length
+
             for key of session
-                @appendingData session[key].trainingName, session[key].date, session[key].howManyTimes, session[key].reps,
+                @appendingDataStatistic session[key].trainingName, session[key].date, session[key].howManyTimes, session[key].reps,
             @headerHref.classList.remove('spinner')
             ), (errorObject) ->
               console.log 'The read failed: ', errorObject.code
 
-    appendingData: (trainingName, date, howManyTimes, reps) =>
-        trainingNumber = document.querySelector('.user-training-number')
-        trainingNumber.innerHTML = trainingName.length
+    appendingDataStatistic: (trainingName, date, howManyTimes, reps) =>
+        trainingNum = document.querySelector('.user-training-number')
+        trainingNameWrapperUl = document.querySelector('.trainingName')
+        li = document.createElement('li')
+
+        @arrayTraining.push [trainingName, date, howManyTimes, reps]
+        @arrayTrainginName.push [@arrayTraining[@arrayTraining.length-1][0]]
+
+        trainingNum.innerHTML = @arrayTraining.length
+
+        i=0
+        while i<=3
+            trainingNameWrapperUl.innerHTML = @arrayTrainginName
+            i++
 
     testForUid: =>
         #test if visitor has id from facebook login, if not, redirect to login page. Vaildate with regex.
         regex = /facebook:[0-9]+$/gm
         object = if window.localStorage['firebase:session::loger'] then JSON.parse(window.localStorage['firebase:session::loger']).uid else []
-        fbImg = if window.localStorage['firebase:session::loger'] then JSON.parse(window.localStorage['firebase:session::loger']) else []
-        @addImgToLogo fbImg.facebook.profileImageURL
 
         if typeof object == "object" || !object.match regex
             window.location.href = @url
@@ -405,8 +421,9 @@ class LogerApp
             return
             ), 1500
 
-    addImgToLogo: (imgUrl) =>
-        @headerHref.setAttribute 'src', imgUrl
+    addImgToLogo: =>
+        fbImg = if window.localStorage['firebase:session::loger'] then JSON.parse(window.localStorage['firebase:session::loger']) else []
+        @headerHref.setAttribute 'src', fbImg.facebook.profileImageURL
 
 document.addEventListener 'DOMContentLoaded', (event) =>
     logerApp = new LogerApp()

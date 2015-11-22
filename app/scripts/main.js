@@ -418,18 +418,34 @@
     };
 
     LogerApp.prototype.appendingDataStatistic = function(session) {
-      var i, key, li, trainingNameWrapperUl, trainingNum;
+      var i, key, li, trainingNameWrapperUl, trainingNum, trainingQuantity;
       trainingNum = document.querySelector('.statistic__user-training-number');
       trainingNameWrapperUl = document.querySelector('.statistic__wrapper__trainingName__ul');
+      trainingQuantity = document.querySelector('.statistic__wrapper__quantity__ul');
       for (key in session) {
         this.arrayTraining.push(session[key]);
       }
-      i = 0;
-      while (i <= this.arrayTraining.length - 1) {
-        li = document.createElement('li');
-        li.innerHTML = this.arrayTraining[i].trainingName;
-        trainingNameWrapperUl.appendChild(li);
-        i++;
+      if (this.arrayTraining.length >= 5) {
+        i = this.arrayTraining.length - 1;
+        while (i >= this.arrayTraining.length - 5) {
+          li = document.createElement('li');
+          li.innerHTML = this.arrayTraining[i].trainingName;
+          trainingNameWrapperUl.appendChild(li);
+          i--;
+        }
+      } else {
+        trainingNameWrapperUl.innerHTML = "Denna lista fylls på när du har gjort fler än 3 övningar";
+      }
+      if (this.arrayTraining.length >= 5) {
+        i = this.arrayTraining.length - 1;
+        while (i >= this.arrayTraining.length - 5) {
+          li = document.createElement('li');
+          li.innerHTML = this.arrayTraining[i].trainingName + ": " + " " + this.arrayTraining[i].reps * this.arrayTraining[i].howManyTimes + " stycken";
+          trainingQuantity.appendChild(li);
+          i--;
+        }
+      } else {
+        trainingQuantity.innerHTML = "Denna lista fylls på när du har gjort fler än 3 övningar";
       }
       return trainingNum.innerHTML = this.arrayTraining.length;
     };

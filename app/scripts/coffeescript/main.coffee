@@ -390,18 +390,38 @@ class LogerApp
     appendingDataStatistic: (session) =>
         trainingNum = document.querySelector('.statistic__user-training-number')
         trainingNameWrapperUl = document.querySelector('.statistic__wrapper__trainingName__ul')
+        trainingQuantity = document.querySelector('.statistic__wrapper__quantity__ul')
+
+
 
         #add all fetched data to an array
         for key of session
             @arrayTraining.push session[key]
 
         #loop and append data with array (@arrayTraining) to different elements in statistic.html
-        i=0
-        while i<=@arrayTraining.length-1
-            li = document.createElement('li')
-            li.innerHTML = @arrayTraining[i].trainingName
-            trainingNameWrapperUl.appendChild li
-            i++
+        if @arrayTraining.length >= 5
+            i = @arrayTraining.length-1
+
+            while i >= @arrayTraining.length-5
+                li = document.createElement('li')
+                li.innerHTML = @arrayTraining[i].trainingName
+                trainingNameWrapperUl.appendChild li
+                i--
+        else
+            trainingNameWrapperUl.innerHTML = "Denna lista fylls på när du har gjort fler än 3 övningar"
+
+
+        if @arrayTraining.length >= 5
+            i = @arrayTraining.length-1
+
+
+            while i >= @arrayTraining.length-5
+                li = document.createElement('li')
+                li.innerHTML = @arrayTraining[i].trainingName + ": " + " " +@arrayTraining[i].reps * @arrayTraining[i].howManyTimes + " stycken"
+                trainingQuantity.appendChild li
+                i--
+        else
+            trainingQuantity.innerHTML = "Denna lista fylls på när du har gjort fler än 3 övningar"
 
         trainingNum.innerHTML = @arrayTraining.length
 

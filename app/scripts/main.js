@@ -406,13 +406,10 @@
       resultUid = uid.slice(9);
       return this.connectionToFirebase.on('child_added', ((function(_this) {
         return function(snapshot, prevChildKey) {
-          var data, key, objLength, session;
+          var data, session;
           data = snapshot.val();
           session = data[resultUid].sessions;
-          objLength = Object.keys(session).length;
-          for (key in session) {
-            _this.appendingDataStatistic(session[key].trainingName, session[key].date, session[key].howManyTimes, session[key].reps);
-          }
+          _this.appendingDataStatistic(session);
           return _this.headerHref.classList.remove('spinner');
         };
       })(this)), function(errorObject) {
@@ -420,21 +417,37 @@
       });
     };
 
-    LogerApp.prototype.appendingDataStatistic = function(trainingName, date, howManyTimes, reps) {
-      var i, li, results, trainingNameWrapperUl, trainingNum;
-      trainingNum = document.querySelector('.user-training-number');
-      trainingNameWrapperUl = document.querySelector('.trainingName');
-      li = document.createElement('li');
-      this.arrayTraining.push([trainingName, date, howManyTimes, reps]);
-      this.arrayTrainginName.push([this.arrayTraining[this.arrayTraining.length - 1][0]]);
-      trainingNum.innerHTML = this.arrayTraining.length;
-      i = 0;
-      results = [];
-      while (i <= 3) {
-        trainingNameWrapperUl.innerHTML = this.arrayTrainginName;
-        results.push(i++);
+    LogerApp.prototype.appendingDataStatistic = function(session) {
+      var i, key, li, trainingNameWrapperUl, trainingNum, trainingQuantity;
+      trainingNum = document.querySelector('.statistic__user-training-number');
+      trainingNameWrapperUl = document.querySelector('.statistic__wrapper__trainingName__ul');
+      trainingQuantity = document.querySelector('.statistic__wrapper__quantity__ul');
+      for (key in session) {
+        this.arrayTraining.push(session[key]);
       }
-      return results;
+      if (this.arrayTraining.length >= 5) {
+        i = this.arrayTraining.length - 1;
+        while (i >= this.arrayTraining.length - 5) {
+          li = document.createElement('li');
+          li.innerHTML = this.arrayTraining[i].trainingName;
+          trainingNameWrapperUl.appendChild(li);
+          i--;
+        }
+      } else {
+        trainingNameWrapperUl.innerHTML = "Denna lista fylls på när du har gjort fler än 3 övningar";
+      }
+      if (this.arrayTraining.length >= 5) {
+        i = this.arrayTraining.length - 1;
+        while (i >= this.arrayTraining.length - 5) {
+          li = document.createElement('li');
+          li.innerHTML = this.arrayTraining[i].trainingName + ": " + " " + this.arrayTraining[i].reps * this.arrayTraining[i].howManyTimes + " stycken";
+          trainingQuantity.appendChild(li);
+          i--;
+        }
+      } else {
+        trainingQuantity.innerHTML = "Denna lista fylls på när du har gjort fler än 3 övningar";
+      }
+      return trainingNum.innerHTML = this.arrayTraining.length;
     };
 
     LogerApp.prototype.testForUid = function() {

@@ -30,40 +30,38 @@
     }(document, 'script', 'facebook-jssdk'));
 
     </script>
-
-    <div class="main-container-statistic">
-        <ul class="header top-spacing">
-            <li class="header__date-area"></li>
-            <div class="spinner-wrapper">
-                <li class='header__main-container-logo'><img src="" class="header__main-container-logo-href spinner"></li>
-            </div>
-            <li class="header__main-container-back icon"><a href="logg-results.html"><img src="../images/return.png"></a></li>
-        </ul>
-        <div class="wrapper-inner">
-            <div class="top-container">
-                <div class="training-number">
-                    <ul>
-                        <li class="title">Träningstillfällen</li>
-                        <li class="user-training-number"></li>
-                        <li class="p">st</li>
-                    </ul>
-                </div>
-                <div class="record-number">
-                    <ul>
-                        <li class="title">Senaste träningsformerna</li>
-                        <li class="trainingName"></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="middle-container">
-                <div class="reps"></div>
-            </div>
-            <div class="chart"></div>
-            <div class="footer-area">
-                <div class='footer__main-container-logout'><img src='../images/logout.png'></div>
-            </div>
+    <ul class="header top-spacing">
+        <li class="header__date-area"></li>
+        <div class="spinner-wrapper">
+            <li class='header__main-container-logo'><img src="" class="header__main-container-logo-href spinner"></li>
         </div>
+        <li class="header__main-container-back icon"><a href="logg-results.html"><img src="../images/return.png"></a></li>
+    </ul>
+
+    <div class="statistic">
+        <div class="statistic__wrapper">
+            <div class="statistic__wrapper__title statistic__wrapper__training-number">Träningstillfällen</div>
+            <div class="statistic__user-training-number"></div>
+        </div>
+
+        <div class="statistic__wrapper">
+            <div class="statistic__wrapper__title statistic__wrapper__trainingName">Senaste 5 träningsformerna</div>
+            <ul class="statistic__wrapper__trainingName__ul"></ul>
+        </div>
+
+        <div class="statistic__wrapper">
+            <div class="statistic__wrapper__title statistic__wrapper__quantity">Antal repetitioner per övning senaste 5 gångerna</div>
+            <ul class="statistic__wrapper__quantity__ul"></ul>
+        </div>
+
+        <div class="chart">
+        </div>
+
+        <footer>
+            <div class='footer__main-container-logout'><img src='../images/logout.png'></div>
+        </footer>
     </div>
-    <script src="scripts/main.js"></script>
+</div>
+<script src="scripts/main.js"></script>
 </body>
 </html>

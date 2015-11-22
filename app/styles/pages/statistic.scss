@@ -1,0 +1,38 @@
+.statistic__wrapper{
+    height: 180px;
+    width: 90%;
+    background: $darkGreen;
+    display: block;
+    margin: 30px auto;
+    padding: 10% 10px 25% 10px;
+    text-align: center;
+    border-radius: 4px;
+    ul{
+        color: $basic-color;
+        padding: 0;
+        li{
+            display: block;
+            padding: 0;
+            font-size: 1.3em;
+        }
+    }
+      @include bp-medium {
+          padding: 2% 10px;
+      }
+}
+.statistic__wrapper__title{
+    color: $white;
+    font-weight: bold;
+    font-size: 1.6em;
+    padding-top: 10px;
+}
+
+.statistic__user-training-number{
+    font-size: 4em;
+    font-weight: bold;
+    padding-top: 30px;
+}
+
+.statistic__wrapper__quantity{
+
+}

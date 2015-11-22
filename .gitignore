@@ -1,8 +1,6 @@
-# Ignore everything
-*
-
-# But not these files...
-app
-
-# ...even if they are in subdirectories
-!*/
+node_modules
+test/gulp-file
+test/sass
+test/slug
+temp/
+bower_components

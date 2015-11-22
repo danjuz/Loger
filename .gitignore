@@ -1,0 +1,8 @@
+# Ignore everything
+*
+
+# But not these files...
+app
+
+# ...even if they are in subdirectories
+!*/

@@ -1,0 +1,27 @@
+body {
+  background-color: #84DAC1;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  padding: 0;
+  margin: 0;
+}
+
+a{
+  text-decoration: none;
+}
+
+ul li{
+  list-style-type: none;
+  display: inline-block;
+}
+
+li{
+  padding-left: 6.5%;
+
+}
+
+//change placeholder inside input field
+::-webkit-input-placeholder {
+ color: $text-color-in-modules;
+}

@@ -1,0 +1,41 @@
+.main-container{
+
+}
+
+.header__main-container-logo a{
+  color: white;
+}
+
+.register-login-container{
+  margin-top: 110px;
+
+}
+
+.register-login-container__information{
+  margin-bottom: 30px;
+  text-align: center;
+  color: white;
+}
+
+.register-login-container__button{
+  background-color: #61A18F;
+  cursor: pointer;
+  margin-left: auto;
+  margin-right: auto;
+  width: 60px;
+  height: 60px;
+  border-radius: 100%;
+
+  img{
+    height: 35px;
+    margin-left: 12px;
+    margin-top: 12px;
+  }
+
+  p{
+    font-size: 100px;
+    color: #A8F8E1;
+    margin-top: -85px;
+    margin-left: -10px;
+  }
+}

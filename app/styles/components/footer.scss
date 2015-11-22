@@ -1,21 +1,18 @@
 footer{
-    clear: both;
-    position: relative;
-    z-index: 10;
+    z-index: -1;
     height: 3em;
     margin-top: 2em;
 
     .footer-area__img{
         font-size: 10em;
-        position: absolute;
         color: #90EDD2;
     }
 
     .footer__main-container-logout{
-        position: absolute;
-        bottom: 20px;
-        right: 50px;
-        cursor: pointer;
+        position: fixed;
+        bottom: 0;
+        height: 60px;
+        right: 25px;
         img{
             width: 30px;
         }

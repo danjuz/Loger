@@ -11,7 +11,7 @@
 }
 .header__main-container-back {
     @extend %position;
-        margin: 1em 3em 0 0;
+        margin: 1em 1em 0 0;
 
         right: 30px;
     img {
@@ -40,7 +40,7 @@
 }
 .header__main-container-statistic{
     @extend %position;
-    margin: 1em 3em 0 0;
+    margin: 1em 1em 0 0;
     right: 30px;
     img {
         width: 50px;

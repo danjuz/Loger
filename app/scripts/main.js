@@ -406,13 +406,10 @@
       resultUid = uid.slice(9);
       return this.connectionToFirebase.on('child_added', ((function(_this) {
         return function(snapshot, prevChildKey) {
-          var data, key, objLength, session;
+          var data, session;
           data = snapshot.val();
           session = data[resultUid].sessions;
-          objLength = Object.keys(session).length;
-          for (key in session) {
-            _this.appendingDataStatistic(session[key].trainingName, session[key].date, session[key].howManyTimes, session[key].reps);
-          }
+          _this.appendingDataStatistic(session);
           return _this.headerHref.classList.remove('spinner');
         };
       })(this)), function(errorObject) {
@@ -420,21 +417,21 @@
       });
     };
 
-    LogerApp.prototype.appendingDataStatistic = function(trainingName, date, howManyTimes, reps) {
-      var i, li, results, trainingNameWrapperUl, trainingNum;
-      trainingNum = document.querySelector('.user-training-number');
-      trainingNameWrapperUl = document.querySelector('.trainingName');
-      li = document.createElement('li');
-      this.arrayTraining.push([trainingName, date, howManyTimes, reps]);
-      this.arrayTrainginName.push([this.arrayTraining[this.arrayTraining.length - 1][0]]);
-      trainingNum.innerHTML = this.arrayTraining.length;
-      i = 0;
-      results = [];
-      while (i <= 3) {
-        trainingNameWrapperUl.innerHTML = this.arrayTrainginName;
-        results.push(i++);
+    LogerApp.prototype.appendingDataStatistic = function(session) {
+      var i, key, li, trainingNameWrapperUl, trainingNum;
+      trainingNum = document.querySelector('.statistic__user-training-number');
+      trainingNameWrapperUl = document.querySelector('.statistic__wrapper__trainingName__ul');
+      for (key in session) {
+        this.arrayTraining.push(session[key]);
       }
-      return results;
+      i = 0;
+      while (i <= this.arrayTraining.length - 1) {
+        li = document.createElement('li');
+        li.innerHTML = this.arrayTraining[i].trainingName;
+        trainingNameWrapperUl.appendChild(li);
+        i++;
+      }
+      return trainingNum.innerHTML = this.arrayTraining.length;
     };
 
     LogerApp.prototype.testForUid = function() {

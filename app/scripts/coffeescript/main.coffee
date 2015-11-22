@@ -381,29 +381,30 @@ class LogerApp
         @connectionToFirebase.on 'child_added', ((snapshot, prevChildKey) =>
             data =  snapshot.val()
             session = data[resultUid].sessions
+            @appendingDataStatistic session
 
-            objLength = Object.keys(session).length
-
-            for key of session
-                @appendingDataStatistic session[key].trainingName, session[key].date, session[key].howManyTimes, session[key].reps,
             @headerHref.classList.remove('spinner')
             ), (errorObject) ->
               console.log 'The read failed: ', errorObject.code
 
-    appendingDataStatistic: (trainingName, date, howManyTimes, reps) =>
-        trainingNum = document.querySelector('.user-training-number')
-        trainingNameWrapperUl = document.querySelector('.trainingName')
-        li = document.createElement('li')
+    appendingDataStatistic: (session) =>
+        trainingNum = document.querySelector('.statistic__user-training-number')
+        trainingNameWrapperUl = document.querySelector('.statistic__wrapper__trainingName__ul')
 
-        @arrayTraining.push [trainingName, date, howManyTimes, reps]
-        @arrayTrainginName.push [@arrayTraining[@arrayTraining.length-1][0]]
+        #add all fetched data to an array
+        for key of session
+            @arrayTraining.push session[key]
+
+        #loop and append data with array (@arrayTraining) to different elements in statistic.html
+        i=0
+        while i<=@arrayTraining.length-1
+            li = document.createElement('li')
+            li.innerHTML = @arrayTraining[i].trainingName
+            trainingNameWrapperUl.appendChild li
+            i++
 
         trainingNum.innerHTML = @arrayTraining.length
 
-        i=0
-        while i<=3
-            trainingNameWrapperUl.innerHTML = @arrayTrainginName
-            i++
 
     testForUid: =>
         #test if visitor has id from facebook login, if not, redirect to login page. Vaildate with regex.

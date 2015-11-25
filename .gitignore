@@ -4,3 +4,5 @@ test/sass
 test/slug
 temp/
 bower_components
+npm-debug.log
+.editorconfig

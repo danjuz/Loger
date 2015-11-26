@@ -1,8 +1,6 @@
 (function() {
-  var LogerApp, dateNames,
+  var LogerApp,
     bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
-
-  dateNames = ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec'];
 
   LogerApp = (function() {
     function LogerApp() {
@@ -26,8 +24,9 @@
       this.redirectWithFBAndFB = bind(this.redirectWithFBAndFB, this);
       this.dateOfToday = bind(this.dateOfToday, this);
       this.bindInitialEvents = bind(this.bindInitialEvents, this);
-      this.connectionToFirebase = new Firebase('https://loger.firebaseio.com/');
       this.url = 'http://localhost:9000/';
+      this.dateNames = ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec'];
+      this.connectionToFirebase = new Firebase('https://loger.firebaseio.com/');
       this.loginButton = document.querySelector('.register-login-container__button');
       this.addButton = document.querySelector('.add-container__button');
       this.saveButton = document.querySelector('.save-content__button');
@@ -125,7 +124,7 @@
       date = today.getDate();
       month = today.getMonth();
       dateLocation = document.querySelector('.header__date-area');
-      return dateLocation.innerHTML = "<div class='date-area__date'>" + date + "</div><br/><div class='date-area__month'>" + dateNames[month] + "</div>";
+      return dateLocation.innerHTML = "<div class='date-area__date'>" + date + "</div><br/><div class='date-area__month'>" + this.dateNames[month] + "</div>";
     };
 
     LogerApp.prototype.redirectWithFBAndFB = function() {
@@ -315,7 +314,9 @@
     };
 
     LogerApp.prototype.deleteIt = function(e) {
-      return e.target.parentNode.parentNode.parentNode.parentNode.remove();
+      var deleteElement;
+      deleteElement = e.target.parentNode.parentNode.parentNode.parentNode;
+      return deleteElement.parentNode.removeChild(deleteElement);
     };
 
     LogerApp.prototype.addClass = function(element, className) {

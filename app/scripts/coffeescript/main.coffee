@@ -1,10 +1,10 @@
-dateNames = ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec']
-
 class LogerApp
     constructor: ->
-        @connectionToFirebase = new Firebase('https://loger.firebaseio.com/')
         #@url ='http://loger.daju.se/'
         @url ='http://localhost:9000/'
+
+        @dateNames = ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec']
+        @connectionToFirebase = new Firebase('https://loger.firebaseio.com/')
 
         @loginButton = document.querySelector('.register-login-container__button')
         @addButton = document.querySelector('.add-container__button')
@@ -87,7 +87,7 @@ class LogerApp
         month = today.getMonth()
 
         dateLocation = document.querySelector('.header__date-area')
-        dateLocation.innerHTML = "<div class='date-area__date'>" + date + "</div><br/><div class='date-area__month'>" + dateNames[month] + "</div>"
+        dateLocation.innerHTML = "<div class='date-area__date'>" + date + "</div><br/><div class='date-area__month'>" + @dateNames[month] + "</div>"
 
     redirectWithFBAndFB: =>
         ref = new Firebase('https://loger.firebaseio.com')
@@ -303,8 +303,8 @@ class LogerApp
         @addClass(showStats, 'hidden')
 
     deleteIt: (e) =>
-        #This delete the whole container with input fields and buttons
-        e.target.parentNode.parentNode.parentNode.parentNode.remove()
+        deleteElement = e.target.parentNode.parentNode.parentNode.parentNode
+        deleteElement.parentNode.removeChild(deleteElement)
 
     addClass: (element, className) =>
         element.classList.add(className)
@@ -410,10 +410,8 @@ class LogerApp
         else
             trainingNameWrapperUl.innerHTML = "Denna lista fylls på när du har gjort fler än 3 övningar"
 
-
         if @arrayTraining.length >= 5
             i = @arrayTraining.length-1
-
 
             while i >= @arrayTraining.length-5
                 li = document.createElement('li')
